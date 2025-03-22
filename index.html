@@ -809,6 +809,181 @@
                 max-width: calc(100% - 2rem);
             }
         }
+        
+        /* Add Article Button */
+        .add-article-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        .add-article-btn:hover {
+            background-color: var(--primary-hover);
+            transform: scale(1.05);
+        }
+        
+        /* Form Modal */
+        .form-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+        }
+        
+        .form-modal-content {
+            background-color: var(--card-bg);
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: var(--radius);
+            max-width: 800px;
+            width: 90%;
+            box-shadow: var(--shadow);
+            position: relative;
+            color: var(--text-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+        
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .tag {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .tag-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 5px;
+            background: transparent;
+            color: var(--text-color);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-cancel {
+            background-color: transparent;
+            color: var(--text-color);
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-cancel:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .form-alert {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: var(--radius);
+            display: none;
+        }
+        
+        .form-alert.success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .form-alert.error {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        /* Posts Tag styles */
+        .tag-pill {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -904,7 +1079,45 @@
             <button id="closeModal" class="close-modal">&times;</button>
             <h1 id="modalTitle"></h1>
             <div class="article-date" id="modalDate"></div>
+            <div class="article-tags" id="modalTags"></div>
             <div class="article-content" id="modalContent"></div>
+        </div>
+    </div>
+    
+    <!-- Add Article Button -->
+    <button id="addArticleBtn" class="add-article-btn">+</button>
+    
+    <!-- Add Article Form Modal -->
+    <div id="addArticleModal" class="form-modal">
+        <div class="form-modal-content">
+            <button id="closeFormModal" class="close-modal">&times;</button>
+            <h2>Add New Article</h2>
+            
+            <div id="formAlert" class="form-alert"></div>
+            
+            <form id="addArticleForm">
+                <div class="form-group">
+                    <label for="articleTitle">Title</label>
+                    <input type="text" id="articleTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="articleContent">Content (Markdown)</label>
+                    <textarea id="articleContent" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="articleTags">Tags (Press Enter to add)</label>
+                    <div id="tagsContainer" class="tags-input">
+                        <input type="text" id="tagInput" class="tag-input" placeholder="Add tags...">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" id="cancelBtn" class="btn-cancel">Cancel</button>
+                    <button type="submit" class="btn-submit">Publish Article</button>
+                </div>
+            </form>
         </div>
     </div>
     
@@ -937,7 +1150,18 @@
         const closeModal = document.getElementById('closeModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalDate = document.getElementById('modalDate');
+        const modalTags = document.getElementById('modalTags');
         const modalContent = document.getElementById('modalContent');
+        
+        // Add Article Form Elements
+        const addArticleBtn = document.getElementById('addArticleBtn');
+        const addArticleModal = document.getElementById('addArticleModal');
+        const closeFormModal = document.getElementById('closeFormModal');
+        const addArticleForm = document.getElementById('addArticleForm');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const tagInput = document.getElementById('tagInput');
+        const tagsContainer = document.getElementById('tagsContainer');
+        const formAlert = document.getElementById('formAlert');
         
         // Theme toggle
         themeToggle.addEventListener('click', () => {
@@ -1010,6 +1234,17 @@
             modalTitle.textContent = article.title;
             modalDate.textContent = formatDate(article.created_at);
             
+            // Clear and populate tags
+            modalTags.innerHTML = '';
+            if (article.tags && article.tags.length > 0) {
+                article.tags.forEach(tag => {
+                    const tagEl = document.createElement('span');
+                    tagEl.className = 'tag-pill';
+                    tagEl.textContent = tag;
+                    modalTags.appendChild(tagEl);
+                });
+            }
+            
             // Set up marked.js with syntax highlighting
             marked.setOptions({
                 highlight: function(code, lang) {
@@ -1041,9 +1276,9 @@
             noArticlesMessage.style.display = 'none';
             
             try {
-                // Fetch articles from Supabase
-                const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/blog?order=created_at.desc`, {
+                // Try to fetch from posts table first
+                let response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/posts?order=created_at.desc`, {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
@@ -1051,11 +1286,30 @@
                     }
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch articles');
+                // If posts table doesn't exist or is empty, fall back to blog table
+                let articles = [];
+                
+                if (response.ok) {
+                    articles = await response.json();
                 }
                 
-                const articles = await response.json();
+                // If no articles in posts table, try the blog table
+                if (articles.length === 0) {
+                    response = await fetch(
+                        `${SUPABASE_URL}/rest/v1/blog?order=created_at.desc`, {
+                        method: 'GET',
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        articles = await response.json();
+                    } else {
+                        throw new Error('Failed to fetch articles');
+                    }
+                }
                 
                 if (articles.length === 0) {
                     noArticlesMessage.style.display = 'block';
@@ -1069,9 +1323,19 @@
                 articles.forEach(article => {
                     const articleCard = document.createElement('div');
                     articleCard.className = 'article-card';
+                    
+                    // Generate tags HTML if tags exist
+                    let tagsHTML = '';
+                    if (article.tags && article.tags.length > 0) {
+                        tagsHTML = '<div class="article-tags">' + 
+                            article.tags.map(tag => `<span class="tag-pill">${tag}</span>`).join('') + 
+                            '</div>';
+                    }
+                    
                     articleCard.innerHTML = `
                         <h3 class="article-title">${article.title}</h3>
-                        <div class="article-preview">${createContentPreview(article.content)}</div>
+                        ${tagsHTML}
+                        <div class="article-preview">${createContentPreview(article.content, 200)}</div>
                         <div class="article-meta">
                             <div class="article-date">${formatDate(article.created_at)}</div>
                             <button class="read-more-btn">Read More</button>
@@ -1097,6 +1361,151 @@
                 loadingArticles.style.display = 'none';
             }
         }
+        
+        // Add Article Form Functions
+        
+        // Show form modal
+        addArticleBtn.addEventListener('click', () => {
+            addArticleModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            formAlert.style.display = 'none';
+        });
+        
+        // Hide form modal
+        closeFormModal.addEventListener('click', () => {
+            addArticleModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            addArticleForm.reset();
+            clearTags();
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            addArticleModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            addArticleForm.reset();
+            clearTags();
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === addArticleModal) {
+                addArticleModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                addArticleForm.reset();
+                clearTags();
+            }
+        });
+        
+        // Tags handling
+        const tags = [];
+        
+        function renderTags() {
+            // Remove all tag elements
+            const existingTags = document.querySelectorAll('.tag');
+            existingTags.forEach(tag => tag.remove());
+            
+            // Add all tags from the array
+            const input = document.getElementById('tagInput');
+            tags.forEach(tag => {
+                const tagElement = document.createElement('div');
+                tagElement.className = 'tag';
+                tagElement.innerHTML = `
+                    ${tag}
+                    <span class="tag-remove" data-tag="${tag}">&times;</span>
+                `;
+                tagsContainer.insertBefore(tagElement, input);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.tag-remove').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const tagToRemove = e.target.getAttribute('data-tag');
+                    const index = tags.indexOf(tagToRemove);
+                    if (index !== -1) {
+                        tags.splice(index, 1);
+                        renderTags();
+                    }
+                    e.stopPropagation(); // Prevent the click from bubbling up
+                });
+            });
+        }
+        
+        function clearTags() {
+            tags.length = 0;
+            renderTags();
+        }
+        
+        tagInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && tagInput.value.trim() !== '') {
+                e.preventDefault();
+                const tag = tagInput.value.trim();
+                if (!tags.includes(tag)) {
+                    tags.push(tag);
+                    renderTags();
+                }
+                tagInput.value = '';
+            }
+        });
+        
+        // Form submission
+        addArticleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const title = document.getElementById('articleTitle').value.trim();
+            const content = document.getElementById('articleContent').value.trim();
+            
+            // Show loading and alert
+            formAlert.textContent = 'Publishing article...';
+            formAlert.className = 'form-alert';
+            formAlert.style.display = 'block';
+            
+            try {
+                // Create article object
+                const article = {
+                    title: title,
+                    content: content,
+                    tags: tags,
+                    created_at: new Date().toISOString()
+                };
+                
+                // Send to Supabase
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(article)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to publish article');
+                }
+                
+                // Show success message
+                formAlert.textContent = 'Article published successfully!';
+                formAlert.className = 'form-alert success';
+                
+                // Reset form
+                addArticleForm.reset();
+                clearTags();
+                
+                // Refresh articles after a short delay
+                setTimeout(() => {
+                    addArticleModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    fetchAllArticles();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                formAlert.textContent = error.message || 'Failed to publish article. Please try again.';
+                formAlert.className = 'form-alert error';
+            }
+        });
     </script>
 </body>
 </html> 
