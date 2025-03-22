@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Blog</title>
+    <!-- Include marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Include highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-color: #374151;
+            --text-light: #6b7280;
+            --bg-color: #f9fafb;
+            --card-bg: white;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --header-bg: #1e3a8a;
+            --header-text: white;
+            --transition-speed: 0.3s;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 0.5rem;
+        }
+        
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --primary-hover: #60a5fa;
+            --text-color: #e5e7eb;
+            --text-light: #9ca3af;
+            --bg-color: #111827;
+            --card-bg: #1f2937;
+            --border-color: #374151;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --header-bg: #111827;
+            --header-text: #f9fafb;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .theme-switch {
+            background: none;
+            border: none;
+            color: var(--header-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        
+        h1, h2, h3 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        h2:hover::after {
+            width: 100%;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, textarea, button {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border-color);
+            font-family: inherit;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.2s;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 0.875rem;
+            border-radius: 0.375rem;
+            margin: 1rem 0;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert-success {
+            background-color: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+        
+        .alert-error {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+        
+        /* Markdown styles */
+        .markdown-body {
+            padding: 1.25rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1.25rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .markdown-body h1 {
+            font-size: 1.8rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .markdown-body h2 {
+            font-size: 1.5rem;
+        }
+        
+        .markdown-body h3 {
+            font-size: 1.25rem;
+        }
+        
+        .markdown-body p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        
+        .markdown-body ul, .markdown-body ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .markdown-body a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+        
+        .markdown-body img {
+            max-width: 100%;
+            border-radius: 0.25rem;
+            margin: 1rem 0;
+        }
+        
+        .markdown-body pre, .markdown-body code {
+            background-color: rgba(0,0,0,0.05);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.9em;
+        }
+        
+        .markdown-body pre {
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        
+        .markdown-body pre code {
+            padding: 0;
+            background: none;
+        }
+        
+        .markdown-body blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            color: var(--text-light);
+            margin: 1rem 0;
+            font-style: italic;
+        }
+        
+        .timestamp {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .timestamp::before {
+            content: '🕒';
+            margin-right: 0.5rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-light);
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        footer {
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 640px) {
+            header {
+                padding: 1rem 0;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+            
+            .card {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Minimal Blog</h1>
+            <button class="theme-switch" id="themeToggle">🌙</button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2>Add New Article</h2>
+            <form id="postForm">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" placeholder="Enter article title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">Content (Markdown)</label>
+                    <textarea id="content" name="content" placeholder="# Your title here&#10;&#10;Write your article content using **Markdown**. &#10;&#10;- Bullet points&#10;- Are supported&#10;&#10;```&#10;Even code blocks are supported&#10;```" required></textarea>
+                </div>
+                
+                <button type="submit" id="publishBtn">Publish Article</button>
+            </form>
+            
+            <div id="successAlert" class="alert alert-success">
+                Article published successfully!
+            </div>
+            
+            <div id="errorAlert" class="alert alert-error">
+                Error publishing article. Please try again.
+            </div>
+            
+            <div id="publishingLoading" class="loading">
+                Publishing...
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Latest Article</h2>
+            <button id="fetchLatestBtn">Fetch Latest Article</button>
+            
+            <div id="fetchingLoading" class="loading">
+                Fetching latest article...
+            </div>
+            
+            <div id="latestArticle" class="markdown-body" style="display: none;">
+                <h3 id="articleTitle"></h3>
+                <div id="articleTimestamp" class="timestamp"></div>
+                <div id="articleContent"></div>
+            </div>
+            
+            <div id="fetchErrorAlert" class="alert alert-error">
+                Error fetching the latest article. Please try again.
+            </div>
+            
+            <div id="noArticlesAlert" class="alert alert-error">
+                No articles found. Add your first article!
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>A minimalist blog powered by <a href="https://supabase.com" target="_blank">Supabase</a> and <a href="https://github.com/markedjs/marked" target="_blank">Marked.js</a></p>
+        </div>
+    </footer>
+    
+    <script>
+        // Supabase configuration - replace with your actual values
+        const SUPABASE_URL = 'https://nyvceshwodvfhsezjttr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dmNlc2h3b2R2ZmhzZXpqdHRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2NDYxMzMsImV4cCI6MjA1ODIyMjEzM30.ZaLIw7AMh392QrfaG3HNY9sh2e35TwugrMzSUFo3-sM';
+        
+        // DOM Elements
+        const postForm = document.getElementById('postForm');
+        const publishBtn = document.getElementById('publishBtn');
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        const fetchLatestBtn = document.getElementById('fetchLatestBtn');
+        const latestArticle = document.getElementById('latestArticle');
+        const articleTitle = document.getElementById('articleTitle');
+        const articleContent = document.getElementById('articleContent');
+        const articleTimestamp = document.getElementById('articleTimestamp');
+        const fetchErrorAlert = document.getElementById('fetchErrorAlert');
+        const noArticlesAlert = document.getElementById('noArticlesAlert');
+        const publishingLoading = document.getElementById('publishingLoading');
+        const fetchingLoading = document.getElementById('fetchingLoading');
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
+        });
+        
+        // Set initial theme based on localStorage or user preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+        });
+        
+        // Add event listeners
+        postForm.addEventListener('submit', handleFormSubmit);
+        fetchLatestBtn.addEventListener('click', fetchLatestArticle);
+        
+        // Initialize - fetch latest article on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchLatestArticle();
+        });
+        
+        // Function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString(undefined, { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Function to handle form submission
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            // Hide any previously shown alerts
+            hideAllAlerts();
+            
+            // Get form data
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            
+            // Validate inputs
+            if (!title || !content) {
+                errorAlert.textContent = 'Please fill in both title and content fields.';
+                errorAlert.style.display = 'block';
+                return;
+            }
+            
+            // Show loading and disable button
+            publishingLoading.style.display = 'block';
+            publishBtn.disabled = true;
+            
+            // Create post object with current timestamp
+            const post = {
+                title,
+                content,
+                created_at: new Date().toISOString()
+            };
+            
+            try {
+                // Send POST request to Supabase
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/blog`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(post)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Supabase response:', response.status, errorData);
+                    
+                    let errorMessage = `Error (${response.status}): `;
+                    
+                    if (response.status === 404) {
+                        errorMessage += "Table 'blog' not found. Please create the table in Supabase.";
+                    } else if (response.status === 401) {
+                        errorMessage += "Authentication failed. Check your Supabase anon key.";
+                    } else if (response.status === 403) {
+                        errorMessage += "Permission denied. Enable RLS policies for inserts on the 'blog' table.";
+                    } else if (errorData.message) {
+                        errorMessage += errorData.message;
+                    } else {
+                        errorMessage += "Failed to publish article. See console for details.";
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+                
+                // Show success message and reset form
+                successAlert.style.display = 'block';
+                postForm.reset();
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 3000);
+                
+                // Fetch the latest article to show the newly added post
+                fetchLatestArticle();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorAlert.textContent = error.message || 'Error publishing article. Please try again.';
+                errorAlert.style.display = 'block';
+            } finally {
+                // Hide loading and enable button
+                publishingLoading.style.display = 'none';
+                publishBtn.disabled = false;
+            }
+        }
+        
+        // Function to fetch the latest article
+        async function fetchLatestArticle() {
+            // Hide any previously shown alerts
+            hideAllAlerts();
+            latestArticle.style.display = 'none';
+            
+            // Show loading
+            fetchingLoading.style.display = 'block';
+            fetchLatestBtn.disabled = true;
+            
+            try {
+                // Fetch latest article from Supabase
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/blog?order=created_at.desc&limit=1`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch the latest article');
+                }
+                
+                const articles = await response.json();
+                
+                if (articles.length === 0) {
+                    noArticlesAlert.style.display = 'block';
+                    return;
+                }
+                
+                const latest = articles[0];
+                
+                // Update the UI with the latest article
+                articleTitle.textContent = latest.title;
+                articleTimestamp.textContent = formatDate(latest.created_at);
+                
+                // Set up marked.js with syntax highlighting
+                marked.setOptions({
+                    highlight: function(code, lang) {
+                        if (lang && hljs.getLanguage(lang)) {
+                            return hljs.highlight(code, { language: lang }).value;
+                        }
+                        return hljs.highlightAuto(code).value;
+                    },
+                    breaks: true,
+                    gfm: true
+                });
+                
+                articleContent.innerHTML = marked.parse(latest.content);
+                latestArticle.style.display = 'block';
+                
+                // Apply syntax highlighting to code blocks
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightBlock(block);
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                fetchErrorAlert.textContent = error.message || 'Error fetching the latest article. Please try again.';
+                fetchErrorAlert.style.display = 'block';
+            } finally {
+                // Hide loading and enable button
+                fetchingLoading.style.display = 'none';
+                fetchLatestBtn.disabled = false;
+            }
+        }
+        
+        // Utility function to hide all alerts
+        function hideAllAlerts() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html> 
