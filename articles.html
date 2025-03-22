@@ -11,14 +11,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <style>
         :root {
-            --primary-color: #00a8ff;
-            --primary-hover: #0097e6;
-            --text-color: #374151;
-            --text-light: #6b7280;
-            --bg-color: #f9fafb;
-            --card-bg: white;
-            --border-color: #e5e7eb;
-            --header-bg: #192a56;
+            --primary-color: #0052ff;
+            --primary-hover: #0a46e4;
+            --text-color: #f5f6fa;
+            --text-light: #dcdde1;
+            --bg-color: #0f1c39;
+            --card-bg: #1b2d57;
+            --border-color: #2d4386;
+            --header-bg: #0a1433;
             --header-text: #f5f6fa;
             --transition-speed: 0.3s;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
@@ -28,15 +28,27 @@
         }
         
         [data-theme="dark"] {
-            --primary-color: #00a8ff;
-            --primary-hover: #0097e6;
+            --primary-color: #0052ff;
+            --primary-hover: #0a46e4;
             --text-color: #e5e7eb;
             --text-light: #9ca3af;
-            --bg-color: #111827;
-            --card-bg: #1f2937;
-            --border-color: #374151;
-            --header-bg: #0c2461;
+            --bg-color: #0f1c39;
+            --card-bg: #1b2d57;
+            --border-color: #2d4386;
+            --header-bg: #0a1433;
             --header-text: #f5f6fa;
+        }
+        
+        [data-theme="light"] {
+            --primary-color: #0052ff;
+            --primary-hover: #0a46e4;
+            --text-color: #0f1c39;
+            --text-light: #5b616e;
+            --bg-color: #f7f8fa;
+            --card-bg: white;
+            --border-color: #e5e9ef;
+            --header-bg: #0052ff;
+            --header-text: white;
         }
         
         * {
@@ -151,19 +163,20 @@
             box-shadow: var(--shadow);
             padding: 1.5rem;
             border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
             cursor: pointer;
         }
         
         .article-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-hover);
+            background-color: rgba(0, 82, 255, 0.1);
         }
         
         .article-title {
             font-size: 1.25rem;
             margin-bottom: 0.75rem;
-            color: var(--text-color);
+            color: var(--primary-color);
         }
         
         .article-preview {
@@ -357,12 +370,35 @@
                 padding: 1rem;
             }
         }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .crypto-icon {
+            font-size: 1.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 0.25rem;
+            animation: pulse 2s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>All Articles</h1>
+            <div class="logo">
+                <span class="crypto-icon">₿</span>
+                <h1>All Articles</h1>
+            </div>
             <div style="display: flex; align-items: center;">
                 <nav>
                     <a href="index.html">Home</a>

@@ -11,17 +11,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <style>
         :root {
-            --primary-color: #00a8ff;
-            --primary-hover: #0097e6;
-            --text-color: #374151;
-            --text-light: #6b7280;
-            --bg-color: #f9fafb;
-            --card-bg: white;
-            --border-color: #e5e7eb;
-            --success-color: #10b981;
+            --primary-color: #0052ff;
+            --primary-hover: #0a46e4;
+            --text-color: #e5e7eb;
+            --text-light: #9ca3af;
+            --bg-color: #0f1c39;
+            --card-bg: #1b2d57;
+            --border-color: #2d4386;
+            --success-color: #05b169;
             --error-color: #ef4444;
             --warning-color: #f59e0b;
-            --header-bg: #192a56;
+            --header-bg: #0a1433;
             --header-text: #f5f6fa;
             --transition-speed: 0.3s;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
@@ -30,18 +30,33 @@
         }
         
         [data-theme="dark"] {
-            --primary-color: #00a8ff;
-            --primary-hover: #0097e6;
+            --primary-color: #0052ff;
+            --primary-hover: #0a46e4;
             --text-color: #e5e7eb;
             --text-light: #9ca3af;
-            --bg-color: #111827;
-            --card-bg: #1f2937;
-            --border-color: #374151;
-            --success-color: #10b981;
+            --bg-color: #0f1c39;
+            --card-bg: #1b2d57;
+            --border-color: #2d4386;
+            --success-color: #05b169;
             --error-color: #ef4444;
             --warning-color: #f59e0b;
-            --header-bg: #0c2461;
+            --header-bg: #0a1433;
             --header-text: #f5f6fa;
+        }
+        
+        [data-theme="light"] {
+            --primary-color: #0052ff;
+            --primary-hover: #0a46e4;
+            --text-color: #0f1c39;
+            --text-light: #5b616e;
+            --bg-color: #f7f8fa;
+            --card-bg: white;
+            --border-color: #e5e9ef;
+            --success-color: #05b169;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --header-bg: #0052ff;
+            --header-text: white;
         }
         
         * {
@@ -430,7 +445,10 @@
 <body>
     <header>
         <div class="container">
-            <h1>Admin Dashboard</h1>
+            <div class="logo">
+                <span class="crypto-icon">₿</span>
+                <h1>Admin Dashboard</h1>
+            </div>
             <div style="display: flex; align-items: center;">
                 <nav>
                     <a href="index.html">Home</a>
@@ -443,6 +461,42 @@
     </header>
     
     <div class="container">
+        <div class="card">
+            <h2>Add New Crypto Article</h2>
+            <div class="crypto-categories">
+                <span class="category-tag">Bitcoin</span>
+                <span class="category-tag">Ethereum</span>
+                <span class="category-tag">DeFi</span>
+                <span class="category-tag">NFTs</span>
+                <span class="category-tag">Market Analysis</span>
+            </div>
+            <form id="postForm">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" placeholder="Enter your crypto article title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">Content (Markdown)</label>
+                    <textarea id="content" name="content" placeholder="# Bitcoin Analysis&#10;&#10;Today we're looking at **Bitcoin's** market performance and future predictions.&#10;&#10;## Key Points&#10;&#10;- Bitcoin reached a new resistance level&#10;- Ethereum showed strong correlation&#10;- DeFi projects continue to grow&#10;&#10;```&#10;// Example code for blockchain interaction&#10;const tx = await contract.transfer(recipient, amount);&#10;```" required></textarea>
+                </div>
+                
+                <button type="submit" id="publishBtn">Publish Article <span class="btn-icon">📝</span></button>
+            </form>
+            
+            <div id="successAlert" class="alert alert-success">
+                Article published successfully!
+            </div>
+            
+            <div id="errorAlert" class="alert alert-error">
+                Error publishing article. Please try again.
+            </div>
+            
+            <div id="publishingLoading" class="loading">
+                Publishing...
+            </div>
+        </div>
+        
         <div class="card">
             <h2>Manage Articles</h2>
             <p>View, edit, and delete your blog articles here.</p>
@@ -608,13 +662,13 @@
         
         // Theme toggle
         themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             
-            themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
+            themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
         });
         
         // Set initial theme based on localStorage or user preference
@@ -624,7 +678,7 @@
             const theme = savedTheme || (prefersDark ? 'dark' : 'light');
             
             document.documentElement.setAttribute('data-theme', theme);
-            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+            themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
             
             // Fetch articles when the page loads
             fetchAllArticles();
@@ -938,6 +992,101 @@
             } finally {
                 // Hide loading
                 loadingArticles.style.display = 'none';
+            }
+        }
+
+        // Add event listeners for the publish form
+        const postForm = document.getElementById('postForm');
+        const publishBtn = document.getElementById('publishBtn');
+        const publishingLoading = document.getElementById('publishingLoading');
+        
+        // Post form submission
+        postForm.addEventListener('submit', handleFormSubmit);
+
+        // Function to handle form submission
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            // Hide any previously shown alerts
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+            
+            // Get form data
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            
+            // Validate inputs
+            if (!title || !content) {
+                errorAlert.textContent = 'Please fill in both title and content fields.';
+                errorAlert.style.display = 'block';
+                return;
+            }
+            
+            // Show loading and disable button
+            publishingLoading.style.display = 'block';
+            publishBtn.disabled = true;
+            
+            // Create post object with current timestamp
+            const post = {
+                title,
+                content,
+                created_at: new Date().toISOString()
+            };
+            
+            try {
+                // Send POST request to Supabase
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/blog`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(post)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Supabase response:', response.status, errorData);
+                    
+                    let errorMessage = `Error (${response.status}): `;
+                    
+                    if (response.status === 404) {
+                        errorMessage += "Table 'blog' not found. Please create the table in Supabase.";
+                    } else if (response.status === 401) {
+                        errorMessage += "Authentication failed. Check your Supabase anon key.";
+                    } else if (response.status === 403) {
+                        errorMessage += "Permission denied. Enable RLS policies for inserts on the 'blog' table.";
+                    } else if (errorData.message) {
+                        errorMessage += errorData.message;
+                    } else {
+                        errorMessage += "Failed to publish article. See console for details.";
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+                
+                // Show success message and reset form
+                successAlert.style.display = 'block';
+                postForm.reset();
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 3000);
+                
+                // Refresh the article list
+                fetchAllArticles();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorAlert.textContent = error.message || 'Error publishing article. Please try again.';
+                errorAlert.style.display = 'block';
+            } finally {
+                // Hide loading and enable button
+                publishingLoading.style.display = 'none';
+                publishBtn.disabled = false;
             }
         }
     </script>

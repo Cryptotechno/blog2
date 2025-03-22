@@ -11,16 +11,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <style>
         :root {
-            --primary-color: #00a8ff;
-            --primary-hover: #0097e6;
+            --primary-color: #0052ff;
+            --primary-hover: #0a46e4;
             --text-color: #f5f6fa;
             --text-light: #dcdde1;
-            --bg-color: #192a56;
-            --card-bg: #273c75;
-            --border-color: #40739e;
-            --success-color: #4cd137;
+            --bg-color: #0f1c39;
+            --card-bg: #1b2d57;
+            --border-color: #2d4386;
+            --success-color: #05b169;
             --error-color: #e84118;
-            --header-bg: #0c2461;
+            --header-bg: #0a1433;
             --header-text: #f5f6fa;
             --transition-speed: 0.3s;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
@@ -29,16 +29,16 @@
         }
         
         [data-theme="light"] {
-            --primary-color: #00a8ff;
-            --primary-hover: #0097e6;
-            --text-color: #2f3640;
-            --text-light: #7f8fa6;
-            --bg-color: #f5f6fa;
+            --primary-color: #0052ff;
+            --primary-hover: #0a46e4;
+            --text-color: #0f1c39;
+            --text-light: #5b616e;
+            --bg-color: #f7f8fa;
             --card-bg: white;
-            --border-color: #dcdde1;
-            --success-color: #4cd137;
+            --border-color: #e5e9ef;
+            --success-color: #05b169;
             --error-color: #e84118;
-            --header-bg: #00a8ff;
+            --header-bg: #0052ff;
             --header-text: white;
         }
         
@@ -516,6 +516,299 @@
             font-size: 1.5rem;
             margin: 0 0.5rem;
         }
+        
+        .articles-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .articles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .article-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .article-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+        
+        .article-preview {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        
+        .article-date {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .read-more-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: auto;
+            margin-top: 0;
+        }
+        
+        .read-more-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .no-articles {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-light);
+            font-style: italic;
+        }
+        
+        .market-ticker {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        
+        .market-ticker h3 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .market-ticker h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .ticker-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .ticker-item {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .ticker-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .ticker-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            opacity: 0.8;
+        }
+        
+        .ticker-name {
+            font-weight: 500;
+        }
+        
+        .ticker-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .ticker-change {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .ticker-change.positive {
+            color: var(--success-color);
+        }
+        
+        .ticker-change.negative {
+            color: var(--error-color);
+        }
+
+        .article-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            color: var(--text-color);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            width: auto;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .article-content {
+            margin-top: 1.5rem;
+            line-height: 1.8;
+        }
+        
+        .article-content h1,
+        .article-content h2,
+        .article-content h3 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .article-content p {
+            margin-bottom: 1.25rem;
+        }
+        
+        .article-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.25rem;
+            margin: 1.5rem 0;
+        }
+        
+        .article-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin-left: 0;
+            margin-right: 0;
+            font-style: italic;
+            color: var(--text-light);
+        }
+        
+        .article-content code {
+            font-family: monospace;
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+        }
+        
+        .article-content pre {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        
+        .article-content pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 0.875rem;
+            color: inherit;
+        }
+        
+        .article-content ul,
+        .article-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .ticker-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .articles-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                padding: 1rem;
+                max-width: calc(100% - 2rem);
+            }
+        }
     </style>
 </head>
 <body>
@@ -546,14 +839,14 @@
                 <span class="crypto-icon">₳</span>
             </div>
             <h2>Your Source for Crypto News, Analysis, and Insights</h2>
-            <p>Stay informed about blockchain technology, cryptocurrency markets, and decentralized finance. UPDATED VERSION!</p>
+            <p>Stay informed about blockchain technology, cryptocurrency markets, and decentralized finance.</p>
         </div>
     </div>
     
     <div class="container">
-        <div class="card">
-            <div class="card-header">
-                <h2>Add New Crypto Article</h2>
+        <div class="articles-section">
+            <div class="section-header">
+                <h2>Latest Crypto Articles</h2>
                 <div class="crypto-categories">
                     <span class="category-tag">Bitcoin</span>
                     <span class="category-tag">Ethereum</span>
@@ -562,58 +855,56 @@
                     <span class="category-tag">Market Analysis</span>
                 </div>
             </div>
-            <form id="postForm">
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" id="title" name="title" placeholder="Enter your crypto article title" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="content">Content (Markdown)</label>
-                    <textarea id="content" name="content" placeholder="# Bitcoin Analysis&#10;&#10;Today we're looking at **Bitcoin's** market performance and future predictions.&#10;&#10;## Key Points&#10;&#10;- Bitcoin reached a new resistance level&#10;- Ethereum showed strong correlation&#10;- DeFi projects continue to grow&#10;&#10;```&#10;// Example code for blockchain interaction&#10;const tx = await contract.transfer(recipient, amount);&#10;```" required></textarea>
-                </div>
-                
-                <button type="submit" id="publishBtn">Publish Article <span class="btn-icon">📝</span></button>
-            </form>
             
-            <div id="successAlert" class="alert alert-success">
-                Article published successfully!
+            <div id="loadingArticles" class="loading">Loading articles...</div>
+            
+            <div id="articlesContainer" class="articles-container">
+                <!-- Articles will be loaded here -->
             </div>
             
-            <div id="errorAlert" class="alert alert-error">
-                Error publishing article. Please try again.
-            </div>
-            
-            <div id="publishingLoading" class="loading">
-                Publishing...
+            <div id="noArticlesMessage" class="no-articles" style="display: none;">
+                No articles found. <a href="admin.html">Create your first article</a>.
             </div>
         </div>
         
-        <div class="card">
-            <div class="card-header">
-                <h2>Latest Crypto Insights</h2>
-                <div class="card-actions">
-                    <button id="fetchLatestBtn">Fetch Latest <span class="btn-icon">⟳</span></button>
+        <div class="market-ticker">
+            <h3>Market Snapshot</h3>
+            <div class="ticker-container">
+                <div class="ticker-item">
+                    <span class="ticker-icon">₿</span>
+                    <span class="ticker-name">Bitcoin</span>
+                    <span class="ticker-price">$63,245.78</span>
+                    <span class="ticker-change positive">+2.4%</span>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-icon">Ξ</span>
+                    <span class="ticker-name">Ethereum</span>
+                    <span class="ticker-price">$3,421.56</span>
+                    <span class="ticker-change positive">+1.8%</span>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-icon">₳</span>
+                    <span class="ticker-name">Cardano</span>
+                    <span class="ticker-price">$0.46</span>
+                    <span class="ticker-change negative">-0.7%</span>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-icon">Ł</span>
+                    <span class="ticker-name">Litecoin</span>
+                    <span class="ticker-price">$83.12</span>
+                    <span class="ticker-change positive">+0.5%</span>
                 </div>
             </div>
-            
-            <div id="fetchingLoading" class="loading">
-                Fetching latest insights...
-            </div>
-            
-            <div id="latestArticle" class="markdown-body" style="display: none;">
-                <h3 id="articleTitle"></h3>
-                <div id="articleTimestamp" class="timestamp"></div>
-                <div id="articleContent"></div>
-            </div>
-            
-            <div id="fetchErrorAlert" class="alert alert-error">
-                Error fetching the latest article. Please try again.
-            </div>
-            
-            <div id="noArticlesAlert" class="alert alert-error">
-                No articles found. Be the first to add crypto insights!
-            </div>
+        </div>
+    </div>
+    
+    <!-- Article Modal -->
+    <div id="articleModal" class="article-modal">
+        <div class="modal-content">
+            <button id="closeModal" class="close-modal">&times;</button>
+            <h1 id="modalTitle"></h1>
+            <div class="article-date" id="modalDate"></div>
+            <div class="article-content" id="modalContent"></div>
         </div>
     </div>
     
@@ -625,31 +916,28 @@
                     <span class="crypto-icon">Ξ</span>
                     <span class="crypto-icon">Ł</span>
                 </div>
-                <p>Crypto Blog powered by <a href="https://supabase.com" target="_blank">Supabase</a> and <a href="https://github.com/markedjs/marked" target="_blank">Marked.js</a></p>
+                <p>Crypto Blog powered by <a href="https://supabase.com" target="_blank">Supabase</a> | <a href="index.html">Home</a> | <a href="admin.html">Admin</a> | <a href="articles.html">Articles</a></p>
             </div>
         </div>
     </footer>
     
     <script>
-        // Supabase configuration - replace with your actual values
+        // Supabase configuration
         const SUPABASE_URL = 'https://nyvceshwodvfhsezjttr.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dmNlc2h3b2R2ZmhzZXpqdHRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2NDYxMzMsImV4cCI6MjA1ODIyMjEzM30.ZaLIw7AMh392QrfaG3HNY9sh2e35TwugrMzSUFo3-sM';
         
         // DOM Elements
-        const postForm = document.getElementById('postForm');
-        const publishBtn = document.getElementById('publishBtn');
-        const successAlert = document.getElementById('successAlert');
-        const errorAlert = document.getElementById('errorAlert');
-        const fetchLatestBtn = document.getElementById('fetchLatestBtn');
-        const latestArticle = document.getElementById('latestArticle');
-        const articleTitle = document.getElementById('articleTitle');
-        const articleContent = document.getElementById('articleContent');
-        const articleTimestamp = document.getElementById('articleTimestamp');
-        const fetchErrorAlert = document.getElementById('fetchErrorAlert');
-        const noArticlesAlert = document.getElementById('noArticlesAlert');
-        const publishingLoading = document.getElementById('publishingLoading');
-        const fetchingLoading = document.getElementById('fetchingLoading');
+        const loadingArticles = document.getElementById('loadingArticles');
+        const articlesContainer = document.getElementById('articlesContainer');
+        const noArticlesMessage = document.getElementById('noArticlesMessage');
         const themeToggle = document.getElementById('themeToggle');
+        
+        // Modal Elements
+        const articleModal = document.getElementById('articleModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDate = document.getElementById('modalDate');
+        const modalContent = document.getElementById('modalContent');
         
         // Theme toggle
         themeToggle.addEventListener('click', () => {
@@ -669,129 +957,93 @@
             
             document.documentElement.setAttribute('data-theme', theme);
             themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+            
+            // Fetch articles when the page loads
+            fetchAllArticles();
         });
         
-        // Add event listeners
-        postForm.addEventListener('submit', handleFormSubmit);
-        fetchLatestBtn.addEventListener('click', fetchLatestArticle);
-        
-        // Initialize - fetch latest article on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            fetchLatestArticle();
+        // Modal Events
+        closeModal.addEventListener('click', () => {
+            articleModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         });
         
-        // Function to format date
+        window.addEventListener('click', (event) => {
+            if (event.target === articleModal) {
+                articleModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Format date
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString(undefined, { 
                 year: 'numeric', 
                 month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
+                day: 'numeric'
             });
         }
         
-        // Function to handle form submission
-        async function handleFormSubmit(event) {
-            event.preventDefault();
+        // Create a preview of the article content
+        function createContentPreview(content, maxLength = 150) {
+            // Remove markdown formatting for the preview
+            let plainText = content
+                .replace(/#+\s(.*)/g, '$1') // Remove headers
+                .replace(/\*\*(.*)\*\*/g, '$1') // Remove bold
+                .replace(/\*(.*)\*/g, '$1') // Remove italic
+                .replace(/\[(.*)\]\(.*\)/g, '$1') // Remove links
+                .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+                .replace(/`(.*)`/g, '$1') // Remove inline code
+                .replace(/!\[(.*)\]\(.*\)/g, '[Image: $1]') // Replace images
+                .trim();
             
-            // Hide any previously shown alerts
-            hideAllAlerts();
-            
-            // Get form data
-            const title = document.getElementById('title').value.trim();
-            const content = document.getElementById('content').value.trim();
-            
-            // Validate inputs
-            if (!title || !content) {
-                errorAlert.textContent = 'Please fill in both title and content fields.';
-                errorAlert.style.display = 'block';
-                return;
+            if (plainText.length > maxLength) {
+                return plainText.substring(0, maxLength) + '...';
             }
             
-            // Show loading and disable button
-            publishingLoading.style.display = 'block';
-            publishBtn.disabled = true;
-            
-            // Create post object with current timestamp
-            const post = {
-                title,
-                content,
-                created_at: new Date().toISOString()
-            };
-            
-            try {
-                // Send POST request to Supabase
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/blog`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Prefer': 'return=representation'
-                    },
-                    body: JSON.stringify(post)
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error('Supabase response:', response.status, errorData);
-                    
-                    let errorMessage = `Error (${response.status}): `;
-                    
-                    if (response.status === 404) {
-                        errorMessage += "Table 'blog' not found. Please create the table in Supabase.";
-                    } else if (response.status === 401) {
-                        errorMessage += "Authentication failed. Check your Supabase anon key.";
-                    } else if (response.status === 403) {
-                        errorMessage += "Permission denied. Enable RLS policies for inserts on the 'blog' table.";
-                    } else if (errorData.message) {
-                        errorMessage += errorData.message;
-                    } else {
-                        errorMessage += "Failed to publish article. See console for details.";
-                    }
-                    
-                    throw new Error(errorMessage);
-                }
-                
-                // Show success message and reset form
-                successAlert.style.display = 'block';
-                postForm.reset();
-                
-                // Hide success message after 3 seconds
-                setTimeout(() => {
-                    successAlert.style.display = 'none';
-                }, 3000);
-                
-                // Fetch the latest article to show the newly added post
-                fetchLatestArticle();
-                
-            } catch (error) {
-                console.error('Error:', error);
-                errorAlert.textContent = error.message || 'Error publishing article. Please try again.';
-                errorAlert.style.display = 'block';
-            } finally {
-                // Hide loading and enable button
-                publishingLoading.style.display = 'none';
-                publishBtn.disabled = false;
-            }
+            return plainText;
         }
         
-        // Function to fetch the latest article
-        async function fetchLatestArticle() {
-            // Hide any previously shown alerts
-            hideAllAlerts();
-            latestArticle.style.display = 'none';
+        // Open article in modal
+        function openArticleModal(article) {
+            modalTitle.textContent = article.title;
+            modalDate.textContent = formatDate(article.created_at);
             
+            // Set up marked.js with syntax highlighting
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    }
+                    return hljs.highlightAuto(code).value;
+                },
+                breaks: true,
+                gfm: true
+            });
+            
+            modalContent.innerHTML = marked.parse(article.content);
+            
+            // Apply syntax highlighting to code blocks
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightBlock(block);
+            });
+            
+            articleModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Fetch all articles from Supabase
+        async function fetchAllArticles() {
             // Show loading
-            fetchingLoading.style.display = 'block';
-            fetchLatestBtn.disabled = true;
+            loadingArticles.style.display = 'block';
+            articlesContainer.style.display = 'none';
+            noArticlesMessage.style.display = 'none';
             
             try {
-                // Fetch latest article from Supabase
+                // Fetch articles from Supabase
                 const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/blog?order=created_at.desc&limit=1`, {
+                    `${SUPABASE_URL}/rest/v1/blog?order=created_at.desc`, {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
@@ -800,59 +1052,50 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch the latest article');
+                    throw new Error('Failed to fetch articles');
                 }
                 
                 const articles = await response.json();
                 
                 if (articles.length === 0) {
-                    noArticlesAlert.style.display = 'block';
+                    noArticlesMessage.style.display = 'block';
                     return;
                 }
                 
-                const latest = articles[0];
+                // Clear the container
+                articlesContainer.innerHTML = '';
                 
-                // Update the UI with the latest article
-                articleTitle.textContent = latest.title;
-                articleTimestamp.textContent = formatDate(latest.created_at);
-                
-                // Set up marked.js with syntax highlighting
-                marked.setOptions({
-                    highlight: function(code, lang) {
-                        if (lang && hljs.getLanguage(lang)) {
-                            return hljs.highlight(code, { language: lang }).value;
-                        }
-                        return hljs.highlightAuto(code).value;
-                    },
-                    breaks: true,
-                    gfm: true
+                // Populate the articles grid
+                articles.forEach(article => {
+                    const articleCard = document.createElement('div');
+                    articleCard.className = 'article-card';
+                    articleCard.innerHTML = `
+                        <h3 class="article-title">${article.title}</h3>
+                        <div class="article-preview">${createContentPreview(article.content)}</div>
+                        <div class="article-meta">
+                            <div class="article-date">${formatDate(article.created_at)}</div>
+                            <button class="read-more-btn">Read More</button>
+                        </div>
+                    `;
+                    
+                    articleCard.addEventListener('click', () => {
+                        openArticleModal(article);
+                    });
+                    
+                    articlesContainer.appendChild(articleCard);
                 });
                 
-                articleContent.innerHTML = marked.parse(latest.content);
-                latestArticle.style.display = 'block';
-                
-                // Apply syntax highlighting to code blocks
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightBlock(block);
-                });
+                // Show the articles
+                articlesContainer.style.display = 'grid';
                 
             } catch (error) {
                 console.error('Error:', error);
-                fetchErrorAlert.textContent = error.message || 'Error fetching the latest article. Please try again.';
-                fetchErrorAlert.style.display = 'block';
+                noArticlesMessage.textContent = 'Error loading articles. Please try again.';
+                noArticlesMessage.style.display = 'block';
             } finally {
-                // Hide loading and enable button
-                fetchingLoading.style.display = 'none';
-                fetchLatestBtn.disabled = false;
+                // Hide loading
+                loadingArticles.style.display = 'none';
             }
-        }
-        
-        // Utility function to hide all alerts
-        function hideAllAlerts() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                alert.style.display = 'none';
-            });
         }
     </script>
 </body>
