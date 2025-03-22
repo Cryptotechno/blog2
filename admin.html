@@ -917,16 +917,32 @@
         });
         
         // Set initial theme based on localStorage or user preference
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize marked.js with proper configuration
+            marked.setOptions({
+                headerIds: true,
+                headerPrefix: 'section-',
+                mangle: false,
+                breaks: true,
+                gfm: true,
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    }
+                    return hljs.highlightAuto(code).value;
+                }
+            });
+            
+            // Fetch articles on page load
+            await fetchAllArticles();
+            
+            // Set default theme from localStorage or system preference
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const theme = savedTheme || (prefersDark ? 'dark' : 'light');
             
             document.documentElement.setAttribute('data-theme', theme);
             themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
-            
-            // Fetch articles when the page loads
-            fetchAllArticles();
         });
         
         // ======= Modal Events ========
@@ -1450,7 +1466,7 @@
             }, 300);
             
             try {
-                const content = await generateContentWithGemini(prompt);
+                const { title, content } = await generateContentWithGemini(prompt);
                 
                 // Complete progress
                 clearInterval(progressInterval);
@@ -1459,16 +1475,13 @@
                 
                 // Wait a moment to show completion
                 setTimeout(() => {
+                    // Set both title and content
+                    document.getElementById('title').value = title;
                     contentTextarea.value = content;
                     
                     // Close modal
                     aiPromptModal.style.display = 'none';
                     document.body.style.overflow = 'auto';
-                    
-                    // Focus on title if empty
-                    if (!document.getElementById('title').value) {
-                        document.getElementById('title').focus();
-                    }
                 }, 500);
             } catch (error) {
                 // Stop progress animation
@@ -1511,10 +1524,17 @@
             const requestBody = {
                 contents: [{
                     parts: [{
-                        text: `Write a detailed blog post about the following topic: ${prompt}. 
-                              The blog post should be informative, well-structured, and engaging. 
-                              Include a strong introduction, several body paragraphs with key points, 
-                              and a conclusion. Focus on cryptocurrency aspects.`
+                        text: `Generate a complete cryptocurrency blog post about the following topic: ${prompt}.
+                              
+                              Important requirements:
+                              1. First, generate a catchy title with an appropriate emoji/icon at the beginning. The title should be on its own line starting with a single # (Example: "# 💰 The Rise of Bitcoin")
+                              2. After the title, write a detailed blog post that is informative, well-structured, and engaging.
+                              3. Include a strong introduction, several body paragraphs with key points, and a conclusion.
+                              4. Add appropriate emoji/icon before each heading but DO NOT include the ## markdown syntax in the output. Instead use proper heading elements that will render correctly like: <h2>📊 Market Analysis</h2> or use another format that will render as proper headings without showing ## symbols.
+                              5. For list items, use emoji instead of bullet points (not both). For example, instead of "• 📈 Price movement", just use "📈 Price movement" without the bullet point.
+                              6. Focus on cryptocurrency aspects related to the topic.
+                              
+                              Note: DO NOT include "## The Future of ZenCard" or any static heading. Generate a completely new title and content based on the prompt.`
                     }]
                 }],
                 generationConfig: {
@@ -1532,7 +1552,41 @@
                 const corsProxy = 'https://cors-anywhere.herokuapp.com/';
                 const apiUrl = `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`;
                 
-                // Try direct request first
+                // Process the response to extract title and content
+                const processApiResponse = (responseText) => {
+                    const data = JSON.parse(responseText);
+                    
+                    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                        throw new Error('Invalid response format from Gemini API');
+                    }
+                    
+                    const fullText = data.candidates[0].content.parts[0].text;
+                    
+                    // Split the response to separate title and content
+                    // Look for the first line that starts with # which is the title
+                    const lines = fullText.split('\n');
+                    let title = '';
+                    let content = '';
+                    
+                    // Find the title (first line starting with #)
+                    const titleLine = lines.find(line => line.trim().startsWith('# '));
+                    
+                    if (titleLine) {
+                        // Remove the # prefix from the title
+                        title = titleLine.trim().substring(2).trim();
+                        
+                        // Everything else is content
+                        content = fullText;
+                    } else {
+                        // If no title format is found, generate a default title
+                        title = `${prompt} Analysis`;
+                        content = fullText;
+                    }
+                    
+                    return { title, content };
+                };
+                
+                // Modify the direct API call section to use the processing function
                 try {
                     const response = await fetch(apiUrl, {
                         method: 'POST',
@@ -1552,14 +1606,7 @@
                         throw new Error(`API error (${response.status}): ${responseText}`);
                     }
                     
-                    const data = JSON.parse(responseText);
-                    
-                    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
-                        console.error('Unexpected response format:', data);
-                        throw new Error('Invalid response format from Gemini API');
-                    }
-                    
-                    return data.candidates[0].content.parts[0].text;
+                    return processApiResponse(responseText);
                 } catch (directError) {
                     console.warn('Direct API call failed, trying with CORS proxy:', directError);
                     
@@ -1583,14 +1630,7 @@
                             throw new Error(`Proxy API error (${proxyResponse.status}): ${proxyResponseText}`);
                         }
                         
-                        const proxyData = JSON.parse(proxyResponseText);
-                        
-                        if (!proxyData.candidates || !proxyData.candidates[0] || !proxyData.candidates[0].content || !proxyData.candidates[0].content.parts || !proxyData.candidates[0].content.parts[0]) {
-                            console.error('Unexpected proxy response format:', proxyData);
-                            throw new Error('Invalid response format from Gemini API through proxy');
-                        }
-                        
-                        return proxyData.candidates[0].content.parts[0].text;
+                        return processApiResponse(proxyResponseText);
                     } catch (proxyError) {
                         console.warn('Proxy API call also failed, using local fallback:', proxyError);
                         
@@ -1609,36 +1649,40 @@
             const topic = prompt.trim();
             const currentDate = new Date().toLocaleDateString();
             
-            return `# ${topic} - Cryptocurrency Analysis
+            // Create an object with title and content
+            return {
+                title: `💡 ${topic} - Cryptocurrency Analysis`,
+                content: `# 💡 ${topic} - Cryptocurrency Analysis
             
-## Introduction
+## 🌟 Introduction
 
 Welcome to our in-depth analysis of ${topic} in the cryptocurrency space. As of ${currentDate}, this topic has gained significant attention among investors, traders, and blockchain enthusiasts. This article aims to provide a comprehensive overview and insights into why ${topic} matters for the crypto ecosystem.
 
-## Background and Context
+## 📜 Background and Context
 
 ${topic} represents an important development in the cryptocurrency market. Recent trends show increasing interest from both institutional and retail investors. Understanding the historical context helps us better analyze current patterns and potential future movements.
 
-## Key Market Indicators
+## 📊 Key Market Indicators
 
-- Market capitalization: The relative size and growth potential related to ${topic}
-- Trading volume: Recent changes in trading activity around related assets
-- Institutional adoption: How major financial players are approaching this area
-- Regulatory landscape: Current and anticipated regulatory developments
+📈 Market capitalization: The relative size and growth potential related to ${topic}
+💹 Trading volume: Recent changes in trading activity around related assets
+🏢 Institutional adoption: How major financial players are approaching this area
+📋 Regulatory landscape: Current and anticipated regulatory developments
 
-## Technical Analysis
+## 📉 Technical Analysis
 
 From a technical perspective, several patterns are emerging that deserve attention. Chart analysis shows support and resistance levels that may influence short to medium-term price movements. Technical indicators suggest potential volatility in the coming weeks.
 
-## Investment Considerations
+## 💰 Investment Considerations
 
 When considering ${topic} as part of your investment strategy, balance the potential upside with risk management principles. Diversification remains important, as does staying informed about rapid developments in this space.
 
-## Conclusion
+## 🔮 Conclusion
 
 ${topic} continues to evolve within the cryptocurrency ecosystem. While opportunities exist, thoughtful analysis and careful risk management remain essential. We'll continue tracking developments and providing updates as the situation evolves.
 
-*Note: This content was generated locally as a fallback when the AI service was unavailable. For more detailed crypto analysis, please try again later.*`;
+*Note: This content was generated locally as a fallback when the AI service was unavailable. For more detailed crypto analysis, please try again later.*`
+            };
         }
         
         // Add Font Awesome for icons
