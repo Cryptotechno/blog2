@@ -10,68 +10,101 @@
     <!-- Include highlight.js for code syntax highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Include Gemini API -->
+    <script src="https://www.googleapis.com/api/js?key=AIzaSyBnDFBNkuN1AlU8p2J0TjOnz5-QCARBv4U&client=google-gemini-api"></script>
     <style>
         :root {
-            --primary-color: #0052ff;
-            --primary-hover: #0a46e4;
-            --text-color: #f5f6fa;
-            --text-light: #dcdde1;
-            --bg-color: #0f1c39;
-            --card-bg: #1b2d57;
-            --border-color: #2d4386;
-            --success-color: #05b169;
-            --error-color: #e84118;
-            --header-bg: #0a1433;
-            --header-text: #f5f6fa;
-            --transition-speed: 0.3s;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-            --radius: 0.5rem;
+            /* Primary colors */
+            --primary-color: #0052FF;
+            --primary-hover: #0A46E4;
+            
+            /* Light theme (default) */
+            --text-color: #050F19;
+            --text-secondary: #5B616E;
+            --text-light: #71717A;
+            --bg-color: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --border-color: #E5E7EB;
+            --success-color: #05B169;
+            --error-color: #E34A4A;
+            --header-bg: #FFFFFF;
+            --header-text: #050F19;
+            
+            /* UI elements */
+            --transition-speed: 0.2s;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 0 10px rgba(0, 0, 0, 0.03);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-full: 9999px;
+            
+            /* Spacing */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 24px;
+            --space-6: 32px;
+            --space-7: 48px;
+            --space-8: 64px;
+            
+            /* Overlay transparency */
+            --overlay-light: rgba(255, 255, 255, 0.7);
+            --overlay-dark: rgba(5, 15, 25, 0.7);
         }
         
-        [data-theme="light"] {
-            --primary-color: #0052ff;
-            --primary-hover: #0a46e4;
-            --text-color: #0f1c39;
-            --text-light: #5b616e;
-            --bg-color: #f7f8fa;
-            --card-bg: white;
-            --border-color: #e5e9ef;
-            --success-color: #05b169;
-            --error-color: #e84118;
-            --header-bg: #0052ff;
-            --header-text: white;
+        [data-theme="dark"] {
+            --text-color: #FFFFFF;
+            --text-secondary: #A0A0AB;
+            --text-light: #D1D5DB;
+            --bg-color: #050F19;
+            --card-bg: #0A1429;
+            --border-color: #1E293B;
+            --header-bg: #050F19;
+            --header-text: #FFFFFF;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 10px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color var(--transition-speed), color var(--transition-speed);
+            transition: background-color var(--transition-speed), color var(--transition-speed), 
+                border-color var(--transition-speed), box-shadow var(--transition-speed);
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+                "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--bg-color);
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 var(--space-4);
         }
         
         header {
             background-color: var(--header-bg);
             color: var(--header-text);
-            padding: 1.5rem 0;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
+            padding: var(--space-4) 0;
+            margin-bottom: var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         
         header .container {
@@ -82,128 +115,168 @@
         
         nav {
             display: flex;
-            gap: 1rem;
+            gap: var(--space-4);
         }
         
         nav a {
-            color: var(--header-text);
+            color: var(--text-color);
             text-decoration: none;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            transition: background-color 0.2s;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            transition: all var(--transition-speed);
+            position: relative;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transform: translateX(-50%);
+            transition: width var(--transition-speed);
         }
         
         nav a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+        
+        nav a:hover::after {
+            width: 50%;
         }
         
         nav a.active {
-            background-color: rgba(255, 255, 255, 0.2);
-            font-weight: 500;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        nav a.active::after {
+            width: 70%;
         }
         
         .theme-switch {
             background: none;
             border: none;
-            color: var(--header-text);
-            font-size: 1.5rem;
+            color: var(--text-color);
+            font-size: 1.25rem;
             cursor: pointer;
-            margin-left: 1rem;
+            margin-left: var(--space-3);
+            padding: var(--space-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color var(--transition-speed);
+        }
+        
+        .theme-switch:hover {
+            background-color: rgba(0, 0, 0, 0.04);
         }
         
         h1, h2, h3 {
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1rem;
+            font-weight: 600;
+            line-height: 1.25;
+            margin-bottom: var(--space-4);
+            color: var(--text-color);
         }
         
         h1 {
-            font-size: 2rem;
+            font-size: 1.875rem;
         }
         
         h2 {
             font-size: 1.5rem;
-            margin-top: 1.5rem;
+            margin-top: var(--space-5);
             position: relative;
             display: inline-block;
         }
         
-        h2::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -5px;
-            width: 40px;
-            height: 3px;
-            background-color: var(--primary-color);
-            transition: width 0.3s ease;
+        h3 {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-3);
         }
         
-        h2:hover::after {
-            width: 100%;
+        p {
+            margin-bottom: var(--space-4);
+        }
+        
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color var(--transition-speed);
+        }
+        
+        a:hover {
+            color: var(--primary-hover);
         }
         
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            padding: var(--space-5);
+            margin-bottom: var(--space-5);
             border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
             overflow: hidden;
         }
         
         .card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: var(--shadow-hover);
         }
         
         .card-header {
             display: flex;
             flex-direction: column;
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--space-4);
         }
         
         .card-actions {
             display: flex;
             justify-content: flex-end;
-            margin-top: 0.5rem;
+            margin-top: var(--space-3);
         }
         
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: var(--space-5);
             position: relative;
         }
         
-        label {
+        .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--space-2);
             font-weight: 500;
-        }
-        
-        input, textarea, button {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            border: 1px solid var(--border-color);
-            font-family: inherit;
-            font-size: 1rem;
-            background-color: rgba(0, 0, 0, 0.2);
             color: var(--text-color);
-            box-sizing: border-box;
-            transition: all 0.2s ease;
+            transition: all var(--transition-speed);
         }
         
-        input:focus, textarea:focus {
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all var(--transition-speed);
+        }
+        
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.2);
-            background-color: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.15);
         }
         
-        textarea {
-            min-height: 150px;
+        .form-group input:focus + label, .form-group textarea:focus + label, .form-group select:focus + label {
+            color: var(--primary-color);
+        }
+        
+        .form-group textarea {
+            min-height: 200px;
             resize: vertical;
             line-height: 1.6;
         }
@@ -214,13 +287,13 @@
             border: none;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.2s ease;
-            margin-top: 1rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            display: flex;
+            transition: all var(--transition-speed);
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: var(--space-2);
+            border-radius: var(--radius-sm);
+            height: 44px;
         }
         
         button:hover {
@@ -233,7 +306,8 @@
         }
         
         button:disabled {
-            background-color: #7f8fa6;
+            background-color: #E5E7EB;
+            color: #9CA3AF;
             cursor: not-allowed;
             transform: none;
         }
@@ -243,11 +317,12 @@
         }
         
         .alert {
-            padding: 0.875rem;
-            border-radius: 0.375rem;
-            margin: 1rem 0;
+            padding: var(--space-4);
+            border-radius: var(--radius-sm);
+            margin: var(--space-4) 0;
             display: none;
             animation: fadeIn 0.3s ease;
+            font-weight: 500;
         }
         
         @keyframes fadeIn {
@@ -256,29 +331,29 @@
         }
         
         .alert-success {
-            background-color: #d1fae5;
-            border: 1px solid #a7f3d0;
-            color: #047857;
+            background-color: rgba(5, 177, 105, 0.1);
+            border: 1px solid rgba(5, 177, 105, 0.2);
+            color: var(--success-color);
         }
         
         .alert-error {
-            background-color: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
+            background-color: rgba(227, 74, 74, 0.1);
+            border: 1px solid rgba(227, 74, 74, 0.2);
+            color: var(--error-color);
         }
         
         /* Markdown styles */
         .markdown-body {
-            padding: 1.25rem;
+            padding: var(--space-4);
             border-top: 1px solid var(--border-color);
-            margin-top: 1.25rem;
+            margin-top: var(--space-4);
             animation: fadeIn 0.5s ease;
         }
         
         .markdown-body h1 {
             font-size: 1.8rem;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
+            padding-bottom: var(--space-3);
         }
         
         .markdown-body h2 {
@@ -290,13 +365,13 @@
         }
         
         .markdown-body p {
-            margin-bottom: 1rem;
+            margin-bottom: var(--space-4);
             line-height: 1.7;
         }
         
         .markdown-body ul, .markdown-body ol {
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
+            padding-left: var(--space-5);
+            margin-bottom: var(--space-4);
         }
         
         .markdown-body a {
@@ -310,22 +385,22 @@
         
         .markdown-body img {
             max-width: 100%;
-            border-radius: 0.25rem;
-            margin: 1rem 0;
+            border-radius: var(--radius-sm);
+            margin: var(--space-4) 0;
         }
         
         .markdown-body pre, .markdown-body code {
-            background-color: rgba(0,0,0,0.05);
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.25rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
             font-size: 0.9em;
         }
         
         .markdown-body pre {
-            padding: 1rem;
+            padding: var(--space-4);
             overflow-x: auto;
-            margin-bottom: 1rem;
+            margin-bottom: var(--space-4);
         }
         
         .markdown-body pre code {
@@ -335,75 +410,81 @@
         
         .markdown-body blockquote {
             border-left: 4px solid var(--primary-color);
-            padding-left: 1rem;
-            color: var(--text-light);
-            margin: 1rem 0;
+            padding-left: var(--space-4);
+            color: var(--text-secondary);
+            margin: var(--space-4) 0;
             font-style: italic;
         }
         
         .timestamp {
-            color: var(--text-light);
+            color: var(--text-secondary);
             font-size: 0.875rem;
-            margin-bottom: 1rem;
+            margin-bottom: var(--space-4);
             display: flex;
             align-items: center;
         }
         
         .timestamp::before {
             content: '🕒';
-            margin-right: 0.5rem;
+            margin-right: var(--space-2);
         }
         
         .loading {
             display: none;
             text-align: center;
-            padding: 1rem;
-            color: var(--text-light);
+            padding: var(--space-4);
+            color: var(--text-secondary);
+            font-weight: 500;
+            position: relative;
         }
         
         .loading::after {
             content: '';
             display: inline-block;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid var(--border-color);
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid rgba(0, 82, 255, 0.1);
             border-radius: 50%;
             border-top-color: var(--primary-color);
-            animation: spin 1s linear infinite;
-            margin-left: 0.5rem;
+            border-bottom-color: var(--primary-color);
+            animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+            margin-left: var(--space-2);
+            vertical-align: middle;
         }
         
         @keyframes spin {
+            from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
         
         footer {
-            background-color: var(--card-bg);
-            color: var(--text-light);
-            padding: 1.5rem 0;
-            margin-top: 3rem;
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            padding: var(--space-6) 0;
+            margin-top: var(--space-6);
             border-top: 1px solid var(--border-color);
             text-align: center;
+            font-size: 0.875rem;
         }
         
         footer a {
-            color: var(--primary-color);
+            color: var(--text-color);
             text-decoration: none;
         }
         
         footer a:hover {
-            text-decoration: underline;
+            color: var(--primary-color);
         }
         
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             header {
-                padding: 1rem 0;
+                padding: var(--space-3) 0;
             }
             
             header .container {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 1rem;
+                gap: var(--space-3);
             }
             
             nav {
@@ -412,53 +493,76 @@
             }
             
             h1 {
-                font-size: 1.75rem;
+                font-size: 1.5rem;
             }
             
             .card {
-                padding: 1.25rem;
+                padding: var(--space-4);
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .ticker-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .articles-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: var(--space-4);
+                padding: var(--space-4);
+                max-width: calc(100% - 2 * var(--space-4));
             }
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: var(--space-3);
+        }
+        
+        .logo h1 {
+            margin-bottom: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
         }
         
         .crypto-icon {
-            font-size: 1.75rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-right: 0.25rem;
-            animation: pulse 2s infinite ease-in-out;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
         }
         
         .crypto-banner {
-            background: linear-gradient(135deg, var(--header-bg) 0%, var(--primary-color) 100%);
-            padding: 2rem 0;
-            margin-bottom: 2rem;
+            background: linear-gradient(90deg, #F7F9FC 0%, #EDF2FF 100%);
+            padding: var(--space-6) 0;
+            margin-bottom: var(--space-6);
             text-align: center;
-            box-shadow: var(--shadow);
             border-radius: 0 0 var(--radius) var(--radius);
-            color: var(--header-text);
+            color: var(--text-color);
+        }
+        
+        [data-theme="dark"] .crypto-banner {
+            background: linear-gradient(90deg, #0A1429 0%, #0F2756 100%);
         }
         
         .crypto-banner h2 {
-            margin-top: 1rem;
+            margin-top: var(--space-4);
             font-size: 1.75rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
         }
         
         .crypto-banner p {
-            margin-top: 0.5rem;
-            opacity: 0.9;
+            margin-top: var(--space-2);
+            color: var(--text-secondary);
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
@@ -467,12 +571,12 @@
         .crypto-icons {
             display: flex;
             justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
+            gap: var(--space-5);
+            margin-bottom: var(--space-4);
         }
         
         .crypto-icons .crypto-icon {
-            font-size: 2.5rem;
+            font-size: 2rem;
             opacity: 0.9;
             transition: all 0.3s ease;
         }
@@ -485,87 +589,149 @@
         .crypto-categories {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
         }
         
         .category-tag {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.85rem;
+            background-color: rgba(0, 82, 255, 0.1);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            font-weight: 500;
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
         }
         
         .category-tag:hover {
-            background-color: var(--primary-color);
-            transform: translateY(-2px);
+            background-color: rgba(0, 82, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0, 82, 255, 0.15);
+        }
+        
+        /* Add icons to category tags */
+        .category-tag[data-category="Bitcoin"]::before {
+            content: '₿';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        .category-tag[data-category="Ethereum"]::before {
+            content: 'Ξ';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        .category-tag[data-category="DeFi"]::before {
+            content: '💹';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        .category-tag[data-category="NFTs"]::before {
+            content: '🖼️';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        .category-tag[data-category="Market Analysis"]::before {
+            content: '📊';
+            margin-right: 4px;
+            font-size: 0.8em;
         }
         
         .footer-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            gap: var(--space-4);
         }
         
         .footer-icons {
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--space-2);
         }
         
         .footer-icons .crypto-icon {
-            font-size: 1.5rem;
-            margin: 0 0.5rem;
+            font-size: 1.25rem;
+            margin: 0 var(--space-2);
+            color: var(--text-secondary);
         }
         
         .articles-section {
-            margin-bottom: 2rem;
+            margin-bottom: var(--space-6);
         }
         
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--space-5);
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: var(--space-4);
+        }
+        
+        .section-header h2 {
+            margin-top: 0;
+            margin-bottom: 0;
         }
         
         .articles-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
         }
         
         .article-card {
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 1.5rem;
+            padding: var(--space-4);
             border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background-color: var(--primary-color);
+            transition: height 0.3s ease;
         }
         
         .article-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             box-shadow: var(--shadow-hover);
         }
         
+        .article-card:hover::before {
+            height: 100%;
+        }
+        
         .article-title {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+            margin-bottom: var(--space-3);
             color: var(--text-color);
+            font-weight: 600;
         }
         
         .article-preview {
-            color: var(--text-light);
-            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
             flex-grow: 1;
+            font-size: 0.9375rem;
+            line-height: 1.6;
         }
         
         .article-meta {
@@ -573,101 +739,112 @@
             justify-content: space-between;
             align-items: center;
             margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: var(--space-3);
         }
         
         .article-date {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .article-date::before {
+            content: '📅';
             font-size: 0.875rem;
-            color: var(--text-light);
+            margin-right: var(--space-1);
         }
         
         .read-more-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all var(--transition-speed);
             width: auto;
             margin-top: 0;
+            height: auto;
         }
         
         .read-more-btn:hover {
-            background-color: var(--primary-hover);
+            background-color: var(--primary-color);
+            color: white;
         }
         
         .no-articles {
             text-align: center;
-            padding: 3rem 0;
-            color: var(--text-light);
+            padding: var(--space-6) 0;
+            color: var(--text-secondary);
             font-style: italic;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-radius: var(--radius);
+            border: 1px dashed var(--border-color);
         }
         
         .market-ticker {
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 1.5rem;
+            padding: var(--space-4);
             border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
+            margin-bottom: var(--space-6);
         }
         
         .market-ticker h3 {
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
-            display: inline-block;
-            position: relative;
-        }
-        
-        .market-ticker h3::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -5px;
-            width: 40px;
-            height: 3px;
-            background-color: var(--primary-color);
-            transition: width 0.3s ease;
+            margin-bottom: var(--space-4);
+            font-size: 1.125rem;
+            color: var(--text-color);
+            font-weight: 600;
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--border-color);
         }
         
         .ticker-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
+            gap: var(--space-4);
         }
         
         .ticker-item {
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: var(--radius);
+            padding: var(--space-3);
+            background-color: rgba(0, 0, 0, 0.02);
+            border-radius: var(--radius-sm);
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: var(--space-2);
             transition: transform 0.2s ease;
         }
         
         .ticker-item:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
+            background-color: rgba(0, 0, 0, 0.04);
         }
         
         .ticker-icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-            opacity: 0.8;
+            font-size: 1.25rem;
+            margin-bottom: var(--space-1);
+            color: var(--primary-color);
         }
         
         .ticker-name {
             font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
         }
         
         .ticker-price {
-            font-size: 1.25rem;
-            font-weight: 700;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-color);
         }
         
         .ticker-change {
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             font-weight: 500;
         }
         
@@ -686,7 +863,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.4);
             z-index: 1000;
             overflow-y: auto;
         }
@@ -694,42 +871,57 @@
         .modal-content {
             background-color: var(--card-bg);
             max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
+            margin: var(--space-6) auto;
+            padding: var(--space-5);
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-hover);
             position: relative;
             color: var(--text-color);
+            border: 1px solid var(--border-color);
         }
         
         .close-modal {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: var(--space-4);
+            right: var(--space-4);
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--text-light);
+            color: var(--text-secondary);
             width: auto;
             padding: 0;
             margin: 0;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+        
+        .close-modal:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-color);
         }
         
         .article-content {
-            margin-top: 1.5rem;
+            margin-top: var(--space-5);
             line-height: 1.8;
+            color: var(--text-color);
         }
         
         .article-content h1,
         .article-content h2,
         .article-content h3 {
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+            margin-top: var(--space-5);
+            margin-bottom: var(--space-4);
+            font-weight: 600;
         }
         
         .article-content p {
-            margin-bottom: 1.25rem;
+            margin-bottom: var(--space-4);
         }
         
         .article-content a {
@@ -744,33 +936,33 @@
         .article-content img {
             max-width: 100%;
             height: auto;
-            border-radius: 0.25rem;
-            margin: 1.5rem 0;
+            border-radius: var(--radius-sm);
+            margin: var(--space-5) 0;
         }
         
         .article-content blockquote {
             border-left: 4px solid var(--primary-color);
-            padding-left: 1rem;
+            padding-left: var(--space-4);
             margin-left: 0;
             margin-right: 0;
             font-style: italic;
-            color: var(--text-light);
+            color: var(--text-secondary);
         }
         
         .article-content code {
             font-family: monospace;
-            background-color: rgba(0, 0, 0, 0.1);
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.25rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
             font-size: 0.875em;
         }
         
         .article-content pre {
-            background-color: rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            border-radius: 0.375rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: var(--space-4);
+            border-radius: var(--radius-sm);
             overflow-x: auto;
-            margin: 1.5rem 0;
+            margin: var(--space-5) 0;
         }
         
         .article-content pre code {
@@ -782,59 +974,57 @@
         
         .article-content ul,
         .article-content ol {
-            margin-left: 1.5rem;
-            margin-bottom: 1.25rem;
+            margin-left: var(--space-5);
+            margin-bottom: var(--space-4);
         }
         
         .article-content li {
-            margin-bottom: 0.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .ticker-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .articles-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-content {
-                margin: 1rem;
-                padding: 1rem;
-                max-width: calc(100% - 2rem);
-            }
+            margin-bottom: var(--space-2);
         }
         
         /* Add Article Button */
         .add-article-btn {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: var(--space-5);
+            right: var(--space-5);
             background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
+            width: 54px;
+            height: 54px;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-hover);
             z-index: 100;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+        
+        .add-article-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
         .add-article-btn:hover {
             background-color: var(--primary-hover);
-            transform: scale(1.05);
+            transform: translateY(-5px) scale(1.05);
+        }
+        
+        .add-article-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .add-article-btn:active {
+            transform: translateY(0) scale(0.95);
         }
         
         /* Form Modal */
@@ -846,41 +1036,53 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.4);
             overflow: auto;
         }
         
         .form-modal-content {
             background-color: var(--card-bg);
-            margin: 5% auto;
-            padding: 25px;
+            margin: var(--space-6) auto;
+            padding: var(--space-5);
             border-radius: var(--radius);
             max-width: 800px;
             width: 90%;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-hover);
             position: relative;
             color: var(--text-color);
+            border: 1px solid var(--border-color);
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: var(--space-5);
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
+            margin-bottom: var(--space-2);
+            font-weight: 500;
             color: var(--text-color);
         }
         
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: var(--space-3);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            background-color: var(--bg-color);
             color: var(--text-color);
-            font-size: 16px;
+            font-size: 1rem;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.15);
+        }
+        
+        .form-group input:focus + label, .form-group textarea:focus + label, .form-group select:focus + label {
+            color: var(--primary-color);
         }
         
         .form-group textarea {
@@ -891,53 +1093,65 @@
         .tags-input {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            padding: 8px;
+            gap: var(--space-2);
+            padding: var(--space-2);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            background-color: var(--bg-color);
+            min-height: 44px;
         }
         
         .tag {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
+            background-color: rgba(0, 82, 255, 0.1);
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: var(--space-1);
+            font-size: 0.875rem;
+            font-weight: 500;
+            height: 24px;
         }
         
         .tag-remove {
             cursor: pointer;
             font-weight: bold;
+            font-size: 1.125rem;
+            line-height: 0.5;
+            margin-left: var(--space-1);
         }
         
         .tag-input {
             flex: 1;
             border: none;
             outline: none;
-            padding: 5px;
+            padding: var(--space-1);
             background: transparent;
             color: var(--text-color);
+            min-width: 120px;
+            height: 24px;
+            font-size: 0.875rem;
         }
         
         .form-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
+            gap: var(--space-3);
+            margin-top: var(--space-5);
         }
         
         .btn-submit {
             background-color: var(--primary-color);
             color: white;
-            padding: 10px 20px;
+            padding: var(--space-3) var(--space-5);
             border: none;
-            border-radius: var(--radius);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            height: 44px;
         }
         
         .btn-submit:hover {
@@ -947,43 +1161,178 @@
         .btn-cancel {
             background-color: transparent;
             color: var(--text-color);
-            padding: 10px 20px;
+            padding: var(--space-3) var(--space-5);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 16px;
+            font-size: 0.9375rem;
+            height: 44px;
         }
         
         .btn-cancel:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(0, 0, 0, 0.03);
         }
         
         .form-alert {
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            border-radius: var(--radius);
+            padding: var(--space-3) var(--space-4);
+            margin-bottom: var(--space-4);
+            border-radius: var(--radius-sm);
             display: none;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .form-alert.success {
-            background-color: var(--success-color);
-            color: white;
+            background-color: rgba(5, 177, 105, 0.1);
+            border: 1px solid rgba(5, 177, 105, 0.2);
+            color: var(--success-color);
         }
         
         .form-alert.error {
-            background-color: var(--error-color);
-            color: white;
+            background-color: rgba(227, 74, 74, 0.1);
+            border: 1px solid rgba(227, 74, 74, 0.2);
+            color: var(--error-color);
         }
         
         /* Posts Tag styles */
         .tag-pill {
             display: inline-block;
+            background-color: rgba(0, 82, 255, 0.1);
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            margin-right: var(--space-2);
+            margin-bottom: var(--space-2);
+            font-weight: 500;
+        }
+        
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-3);
+        }
+        
+        /* Scroll to top button */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             background-color: var(--primary-color);
             color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin-right: 5px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+            box-shadow: var(--shadow);
+        }
+        
+        .scroll-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-top-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .scroll-top-btn::before {
+            content: "↑";
+            font-size: 1.2rem;
+        }
+        
+        .ai-suggest-btn {
+            background-color: #10B981;
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: var(--space-2) var(--space-3);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-top: var(--space-2);
+            transition: background-color var(--transition-speed);
+        }
+        
+        .ai-suggest-btn:hover {
+            background-color: #059669;
+        }
+        
+        .ai-suggest-btn i {
+            font-size: 1rem;
+        }
+        
+        .ai-prompt-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            overflow: auto;
+        }
+        
+        .ai-prompt-content {
+            background-color: var(--card-bg);
+            margin: var(--space-6) auto;
+            padding: var(--space-5);
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 90%;
+            box-shadow: var(--shadow-hover);
+            position: relative;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .ai-prompt-content h3 {
+            margin-bottom: var(--space-4);
+        }
+        
+        .ai-loading {
+            display: none;
+            text-align: center;
+            margin: var(--space-4) 0;
+        }
+        
+        .ai-loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -1007,11 +1356,11 @@
     <div class="crypto-banner">
         <div class="container">
             <div class="crypto-icons">
-                <span class="crypto-icon">₿</span>
-                <span class="crypto-icon">Ξ</span>
-                <span class="crypto-icon">Ł</span>
-                <span class="crypto-icon">Ð</span>
-                <span class="crypto-icon">₳</span>
+                <span class="crypto-icon">Bitcoin</span>
+                <span class="crypto-icon">Ethereum</span>
+                <span class="crypto-icon">Litecoin</span>
+                <span class="crypto-icon">Dogecoin</span>
+                <span class="crypto-icon">Cardano</span>
             </div>
             <h2>Your Source for Crypto News, Analysis, and Insights</h2>
             <p>Stay informed about blockchain technology, cryptocurrency markets, and decentralized finance.</p>
@@ -1023,11 +1372,11 @@
             <div class="section-header">
                 <h2>Latest Crypto Articles</h2>
                 <div class="crypto-categories">
-                    <span class="category-tag">Bitcoin</span>
-                    <span class="category-tag">Ethereum</span>
-                    <span class="category-tag">DeFi</span>
-                    <span class="category-tag">NFTs</span>
-                    <span class="category-tag">Market Analysis</span>
+                    <span class="category-tag" data-category="Bitcoin">Bitcoin</span>
+                    <span class="category-tag" data-category="Ethereum">Ethereum</span>
+                    <span class="category-tag" data-category="DeFi">DeFi</span>
+                    <span class="category-tag" data-category="NFTs">NFTs</span>
+                    <span class="category-tag" data-category="Market Analysis">Market Analysis</span>
                 </div>
             </div>
             
@@ -1046,28 +1395,28 @@
             <h3>Market Snapshot</h3>
             <div class="ticker-container">
                 <div class="ticker-item">
-                    <span class="ticker-icon">₿</span>
+                    <span class="ticker-icon">BTC</span>
                     <span class="ticker-name">Bitcoin</span>
-                    <span class="ticker-price">$63,245.78</span>
-                    <span class="ticker-change positive">+2.4%</span>
+                    <span class="ticker-price">$27,435.21</span>
+                    <span class="ticker-change negative">-2.34%</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="ticker-icon">Ξ</span>
+                    <span class="ticker-icon">ETH</span>
                     <span class="ticker-name">Ethereum</span>
-                    <span class="ticker-price">$3,421.56</span>
-                    <span class="ticker-change positive">+1.8%</span>
+                    <span class="ticker-price">$1,658.75</span>
+                    <span class="ticker-change positive">+1.45%</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="ticker-icon">₳</span>
+                    <span class="ticker-icon">ADA</span>
                     <span class="ticker-name">Cardano</span>
-                    <span class="ticker-price">$0.46</span>
-                    <span class="ticker-change negative">-0.7%</span>
+                    <span class="ticker-price">$0.352</span>
+                    <span class="ticker-change positive">+0.78%</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="ticker-icon">Ł</span>
+                    <span class="ticker-icon">LTC</span>
                     <span class="ticker-name">Litecoin</span>
-                    <span class="ticker-price">$83.12</span>
-                    <span class="ticker-change positive">+0.5%</span>
+                    <span class="ticker-price">$72.36</span>
+                    <span class="ticker-change negative">-1.12%</span>
                 </div>
             </div>
         </div>
@@ -1124,15 +1473,20 @@
     <footer>
         <div class="container">
             <div class="footer-content">
-                <div class="crypto-icons footer-icons">
-                    <span class="crypto-icon">₿</span>
-                    <span class="crypto-icon">Ξ</span>
-                    <span class="crypto-icon">Ł</span>
+                <div class="footer-icons">
+                    <span class="crypto-icon">BTC</span>
+                    <span class="crypto-icon">ETH</span>
+                    <span class="crypto-icon">LTC</span>
                 </div>
                 <p>Crypto Blog powered by <a href="https://supabase.com" target="_blank">Supabase</a> | <a href="index.html">Home</a> | <a href="admin.html">Admin</a></p>
             </div>
         </div>
     </footer>
+    
+    <!-- Scroll to top button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" aria-label="Scroll to top">
+        <!-- Arrow symbol added via CSS -->
+    </button>
     
     <script>
         // Supabase configuration
@@ -1505,6 +1859,259 @@
                 formAlert.textContent = error.message || 'Failed to publish article. Please try again.';
                 formAlert.className = 'form-alert error';
             }
+        });
+        
+        // Initialize Gemini API
+        const GEMINI_API_KEY = 'AIzaSyBnDFBNkuN1AlU8p2J0TjOnz5-QCARBv4U';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent';
+        
+        // AI Content Generation
+        const aiSuggestBtn = document.createElement('button');
+        aiSuggestBtn.className = 'ai-suggest-btn';
+        aiSuggestBtn.innerHTML = '<i class="fas fa-robot"></i> Generate with AI';
+        aiSuggestBtn.type = 'button';
+        
+        // Add AI suggest button after content textarea
+        const contentTextarea = document.getElementById('articleContent');
+        contentTextarea.parentNode.insertBefore(aiSuggestBtn, contentTextarea.nextSibling);
+        
+        // Create AI Prompt Modal
+        const aiPromptModal = document.createElement('div');
+        aiPromptModal.className = 'ai-prompt-modal';
+        aiPromptModal.innerHTML = `
+            <div class="ai-prompt-content">
+                <h3>Generate Content with AI</h3>
+                <div class="form-group">
+                    <label for="aiPrompt">Describe what you want to write about:</label>
+                    <textarea id="aiPrompt" rows="4" placeholder="E.g., Write an article about the latest trends in cryptocurrency"></textarea>
+                </div>
+                <div class="ai-loading">
+                    <div class="ai-loading-spinner"></div>
+                    <p>Generating content...</p>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="aiPromptCancel">Cancel</button>
+                    <button type="button" class="btn-submit" id="aiPromptSubmit">Generate</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(aiPromptModal);
+        
+        // AI Modal Controls
+        const aiPromptCancelBtn = document.getElementById('aiPromptCancel');
+        const aiPromptSubmitBtn = document.getElementById('aiPromptSubmit');
+        const aiPromptTextarea = document.getElementById('aiPrompt');
+        const aiLoading = document.querySelector('.ai-loading');
+        
+        aiSuggestBtn.addEventListener('click', () => {
+            aiPromptModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            aiPromptTextarea.focus();
+        });
+        
+        aiPromptCancelBtn.addEventListener('click', () => {
+            aiPromptModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        aiPromptSubmitBtn.addEventListener('click', async () => {
+            const prompt = aiPromptTextarea.value.trim();
+            if (!prompt) return;
+            
+            // Show loading
+            aiLoading.style.display = 'block';
+            aiPromptSubmitBtn.disabled = true;
+            aiPromptCancelBtn.disabled = true;
+            
+            try {
+                const content = await generateContentWithGemini(prompt);
+                contentTextarea.value = content;
+                
+                // Close modal
+                aiPromptModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                // Focus on title if empty
+                if (!document.getElementById('articleTitle').value) {
+                    document.getElementById('articleTitle').focus();
+                }
+            } catch (error) {
+                console.error('Error generating content:', error);
+                let errorMessage = 'Failed to generate content. Please try again.';
+                
+                // Check for specific error messages
+                if (error.message.includes('API error')) {
+                    if (error.message.includes('400')) {
+                        errorMessage = 'Bad request. Please check your prompt and try again.';
+                    } else if (error.message.includes('401') || error.message.includes('403')) {
+                        errorMessage = 'API key issue. The Gemini API key may be invalid or has insufficient permissions.';
+                    } else if (error.message.includes('429')) {
+                        errorMessage = 'Too many requests. Please try again later.';
+                    } else if (error.message.includes('5')) {
+                        errorMessage = 'Gemini API server error. Please try again later.';
+                    }
+                }
+                
+                alert(errorMessage);
+            } finally {
+                aiLoading.style.display = 'none';
+                aiPromptSubmitBtn.disabled = false;
+                aiPromptCancelBtn.disabled = false;
+            }
+        });
+        
+        async function generateContentWithGemini(prompt) {
+            const requestBody = {
+                contents: [{
+                    parts: [{
+                        text: `Write a detailed blog post about the following topic: ${prompt}. 
+                              The blog post should be informative, well-structured, and engaging. 
+                              Include a strong introduction, several body paragraphs with key points, 
+                              and a conclusion.`
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    topK: 40,
+                    topP: 0.95,
+                    maxOutputTokens: 2048,
+                }
+            };
+            
+            try {
+                console.log('Sending request to Gemini API:', JSON.stringify(requestBody));
+                
+                // Use a CORS proxy to avoid CORS issues when running locally
+                const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+                const apiUrl = `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`;
+                
+                // Try direct request first
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    // Log response details for debugging
+                    console.log('Response status:', response.status);
+                    
+                    const responseText = await response.text();
+                    console.log('Response text:', responseText);
+                    
+                    if (!response.ok) {
+                        throw new Error(`API error (${response.status}): ${responseText}`);
+                    }
+                    
+                    const data = JSON.parse(responseText);
+                    
+                    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                        console.error('Unexpected response format:', data);
+                        throw new Error('Invalid response format from Gemini API');
+                    }
+                    
+                    return data.candidates[0].content.parts[0].text;
+                } catch (directError) {
+                    console.warn('Direct API call failed, trying with CORS proxy:', directError);
+                    
+                    try {
+                        // If direct request fails, try with CORS proxy
+                        const proxyResponse = await fetch(corsProxy + apiUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify(requestBody)
+                        });
+                        
+                        console.log('Proxy response status:', proxyResponse.status);
+                        
+                        const proxyResponseText = await proxyResponse.text();
+                        console.log('Proxy response text:', proxyResponseText);
+                        
+                        if (!proxyResponse.ok) {
+                            throw new Error(`Proxy API error (${proxyResponse.status}): ${proxyResponseText}`);
+                        }
+                        
+                        const proxyData = JSON.parse(proxyResponseText);
+                        
+                        if (!proxyData.candidates || !proxyData.candidates[0] || !proxyData.candidates[0].content || !proxyData.candidates[0].content.parts || !proxyData.candidates[0].content.parts[0]) {
+                            console.error('Unexpected proxy response format:', proxyData);
+                            throw new Error('Invalid response format from Gemini API through proxy');
+                        }
+                        
+                        return proxyData.candidates[0].content.parts[0].text;
+                    } catch (proxyError) {
+                        console.warn('Proxy API call also failed, using local fallback:', proxyError);
+                        
+                        // If all API attempts fail, use a local fallback to generate simple content
+                        return generateLocalFallbackContent(prompt);
+                    }
+                }
+            } catch (error) {
+                console.error('Detailed error in generateContentWithGemini:', error);
+                throw error;
+            }
+        }
+        
+        // Local fallback content generator
+        function generateLocalFallbackContent(prompt) {
+            const topic = prompt.trim();
+            const currentDate = new Date().toLocaleDateString();
+            
+            return `# ${topic}
+            
+## Introduction
+
+Welcome to our analysis of ${topic}. In this article, we'll explore the key aspects of this fascinating topic and why it matters in today's cryptocurrency landscape. As of ${currentDate}, this has become an increasingly important subject for investors and enthusiasts alike.
+
+## Understanding ${topic}
+
+${topic} represents one of the most interesting developments in the cryptocurrency space. When we examine the market data and expert opinions, several important patterns emerge that deserve our attention.
+
+## Key Points to Consider
+
+- The market impact of ${topic} cannot be understated, particularly with recent developments
+- Experts suggest watching for regulatory changes that might affect this area
+- Technical innovations continue to drive evolution in this space
+- Investor sentiment remains mixed, with both bullish and bearish outlooks
+
+## Market Analysis
+
+Recent market movements indicate a period of adjustment as new information about ${topic} becomes available. Historical patterns suggest that after such periods, we often see renewed interest and potentially significant price movements.
+
+## Conclusion
+
+While ${topic} continues to evolve, staying informed and adaptable remains the best strategy for investors. We'll continue to monitor developments in this area and provide updates as new information becomes available.
+
+*Note: This content was generated locally as a fallback when the AI service was unavailable. For more personalized content, please try again later.*`;
+        }
+        
+        // Add Font Awesome for icons
+        const fontAwesomeLink = document.createElement('link');
+        fontAwesomeLink.rel = 'stylesheet';
+        fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(fontAwesomeLink);
+        
+        // Scroll to top functionality
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+        
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         });
     </script>
 </body>

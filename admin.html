@@ -9,6 +9,8 @@
     <!-- Include highlight.js for code syntax highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Include Gemini API -->
+    <script src="https://www.googleapis.com/api/js?key=AIzaSyBnDFBNkuN1AlU8p2J0TjOnz5-QCARBv4U&client=google-gemini-api"></script>
     <style>
         :root {
             --primary-color: #0052ff;
@@ -88,6 +90,11 @@
             padding: 1.5rem 0;
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         
         header .container {
@@ -106,16 +113,37 @@
             text-decoration: none;
             padding: 0.5rem;
             border-radius: 0.25rem;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transform: translateX(-50%);
+            transition: width 0.2s;
         }
         
         nav a:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
         
+        nav a:hover::after {
+            width: 50%;
+        }
+        
         nav a.active {
-            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--primary-color);
             font-weight: 500;
+        }
+        
+        nav a.active::after {
+            width: 70%;
         }
         
         .theme-switch {
@@ -210,18 +238,48 @@
             border: none;
             cursor: pointer;
             font-weight: 500;
-            transition: background-color 0.2s, transform 0.2s;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
             margin-top: 1rem;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.375rem;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.3s ease;
         }
         
         button:hover {
             background-color: var(--primary-hover);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+        }
+        
+        button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
         }
         
         button:active {
             transform: translateY(0);
+        }
+        
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.2);
         }
         
         button:disabled {
@@ -282,21 +340,25 @@
             text-align: center;
             padding: 2rem 0;
             color: var(--text-light);
+            position: relative;
         }
         
         .loading::after {
             content: '';
             display: inline-block;
-            width: 1rem;
-            height: 1rem;
+            width: 1.25rem;
+            height: 1.25rem;
             border: 2px solid var(--border-color);
             border-radius: 50%;
             border-top-color: var(--primary-color);
-            animation: spin 1s linear infinite;
+            border-bottom-color: var(--primary-color);
+            animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
             margin-left: 0.5rem;
+            vertical-align: middle;
         }
         
         @keyframes spin {
+            from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
         
@@ -440,14 +502,169 @@
                 flex-direction: column;
             }
         }
+        
+        .category-tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 82, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .category-tag:hover {
+            background-color: rgba(0, 82, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0, 82, 255, 0.15);
+        }
+        
+        /* Add icons to category tags */
+        .category-tag[data-category="Bitcoin"]::before {
+            content: '₿';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        .category-tag[data-category="Ethereum"]::before {
+            content: 'Ξ';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        .category-tag[data-category="DeFi"]::before {
+            content: '💹';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        .category-tag[data-category="NFTs"]::before {
+            content: '🖼️';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        .category-tag[data-category="Market Analysis"]::before {
+            content: '📊';
+            margin-right: 4px;
+            font-size: 0.8em;
+        }
+        
+        /* Scroll to top button */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+        
+        .scroll-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-top-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+        }
+        
+        .scroll-top-btn::before {
+            content: "↑";
+            font-size: 1.2rem;
+        }
+        
+        .ai-suggest-btn {
+            background-color: #10B981;
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            transition: background-color var(--transition-speed);
+        }
+        
+        .ai-suggest-btn:hover {
+            background-color: #059669;
+        }
+        
+        .ai-suggest-btn i {
+            font-size: 1rem;
+        }
+        
+        .ai-prompt-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+        
+        .ai-prompt-content {
+            background-color: var(--card-bg);
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 90%;
+            box-shadow: var(--shadow-hover);
+            position: relative;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .ai-prompt-content h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .ai-loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .ai-loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
             <div class="logo">
-                <span class="crypto-icon">₿</span>
-                <h1>Admin Dashboard</h1>
+                <span class="crypto-icon">Crypto</span>
+                <h1>Crypto Blog Admin</h1>
             </div>
             <div style="display: flex; align-items: center;">
                 <nav>
@@ -463,11 +680,11 @@
         <div class="card">
             <h2>Add New Crypto Article</h2>
             <div class="crypto-categories">
-                <span class="category-tag">Bitcoin</span>
-                <span class="category-tag">Ethereum</span>
-                <span class="category-tag">DeFi</span>
-                <span class="category-tag">NFTs</span>
-                <span class="category-tag">Market Analysis</span>
+                <span class="category-tag" data-category="Bitcoin">Bitcoin</span>
+                <span class="category-tag" data-category="Ethereum">Ethereum</span>
+                <span class="category-tag" data-category="DeFi">DeFi</span>
+                <span class="category-tag" data-category="NFTs">NFTs</span>
+                <span class="category-tag" data-category="Market Analysis">Market Analysis</span>
             </div>
             <form id="postForm">
                 <div class="form-group">
@@ -617,6 +834,11 @@
             <p>Crypto Blog powered by <a href="https://supabase.com" target="_blank">Supabase</a> | <a href="index.html">Home</a> | <a href="admin.html">Admin</a></p>
         </div>
     </footer>
+    
+    <!-- Scroll to top button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" aria-label="Scroll to top">
+        <!-- Arrow symbol added via CSS -->
+    </button>
     
     <script>
         // Supabase configuration
@@ -1088,6 +1310,263 @@
                 publishBtn.disabled = false;
             }
         }
+
+        // Scroll to top functionality
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+        
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Initialize Gemini API
+        const GEMINI_API_KEY = 'AIzaSyBnDFBNkuN1AlU8p2J0TjOnz5-QCARBv4U';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent';
+        
+        // AI Content Generation
+        const aiSuggestBtn = document.createElement('button');
+        aiSuggestBtn.className = 'ai-suggest-btn';
+        aiSuggestBtn.innerHTML = '<i class="fas fa-robot"></i> Generate with AI';
+        aiSuggestBtn.type = 'button';
+        
+        // Add AI suggest button after content textarea
+        const contentTextarea = document.getElementById('content');
+        contentTextarea.parentNode.insertBefore(aiSuggestBtn, contentTextarea.nextSibling);
+        
+        // Create AI Prompt Modal
+        const aiPromptModal = document.createElement('div');
+        aiPromptModal.className = 'ai-prompt-modal';
+        aiPromptModal.innerHTML = `
+            <div class="ai-prompt-content">
+                <h3>Generate Content with AI</h3>
+                <div class="form-group">
+                    <label for="aiPrompt">Describe what you want to write about:</label>
+                    <textarea id="aiPrompt" rows="4" placeholder="E.g., Write an article about the latest trends in cryptocurrency"></textarea>
+                </div>
+                <div class="ai-loading">
+                    <div class="ai-loading-spinner"></div>
+                    <p>Generating content...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="aiPromptCancel">Cancel</button>
+                    <button type="button" id="aiPromptSubmit">Generate</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(aiPromptModal);
+        
+        // AI Modal Controls
+        const aiPromptCancelBtn = document.getElementById('aiPromptCancel');
+        const aiPromptSubmitBtn = document.getElementById('aiPromptSubmit');
+        const aiPromptTextarea = document.getElementById('aiPrompt');
+        const aiLoading = document.querySelector('.ai-loading');
+        
+        aiSuggestBtn.addEventListener('click', () => {
+            aiPromptModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            aiPromptTextarea.focus();
+        });
+        
+        aiPromptCancelBtn.addEventListener('click', () => {
+            aiPromptModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        aiPromptSubmitBtn.addEventListener('click', async () => {
+            const prompt = aiPromptTextarea.value.trim();
+            if (!prompt) return;
+            
+            // Show loading
+            aiLoading.style.display = 'block';
+            aiPromptSubmitBtn.disabled = true;
+            aiPromptCancelBtn.disabled = true;
+            
+            try {
+                const content = await generateContentWithGemini(prompt);
+                contentTextarea.value = content;
+                
+                // Close modal
+                aiPromptModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                // Focus on title if empty
+                if (!document.getElementById('title').value) {
+                    document.getElementById('title').focus();
+                }
+            } catch (error) {
+                console.error('Error generating content:', error);
+                let errorMessage = 'Failed to generate content. Please try again.';
+                
+                // Check for specific error messages
+                if (error.message.includes('API error')) {
+                    if (error.message.includes('400')) {
+                        errorMessage = 'Bad request. Please check your prompt and try again.';
+                    } else if (error.message.includes('401') || error.message.includes('403')) {
+                        errorMessage = 'API key issue. The Gemini API key may be invalid or has insufficient permissions.';
+                    } else if (error.message.includes('429')) {
+                        errorMessage = 'Too many requests. Please try again later.';
+                    } else if (error.message.includes('5')) {
+                        errorMessage = 'Gemini API server error. Please try again later.';
+                    }
+                }
+                
+                alert(errorMessage);
+            } finally {
+                aiLoading.style.display = 'none';
+                aiPromptSubmitBtn.disabled = false;
+                aiPromptCancelBtn.disabled = false;
+            }
+        });
+        
+        async function generateContentWithGemini(prompt) {
+            const requestBody = {
+                contents: [{
+                    parts: [{
+                        text: `Write a detailed blog post about the following topic: ${prompt}. 
+                              The blog post should be informative, well-structured, and engaging. 
+                              Include a strong introduction, several body paragraphs with key points, 
+                              and a conclusion. Focus on cryptocurrency aspects.`
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    topK: 40,
+                    topP: 0.95,
+                    maxOutputTokens: 2048,
+                }
+            };
+            
+            try {
+                console.log('Sending request to Gemini API:', JSON.stringify(requestBody));
+                
+                // Use a CORS proxy to avoid CORS issues when running locally
+                const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+                const apiUrl = `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`;
+                
+                // Try direct request first
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    // Log response details for debugging
+                    console.log('Response status:', response.status);
+                    
+                    const responseText = await response.text();
+                    console.log('Response text:', responseText);
+                    
+                    if (!response.ok) {
+                        throw new Error(`API error (${response.status}): ${responseText}`);
+                    }
+                    
+                    const data = JSON.parse(responseText);
+                    
+                    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                        console.error('Unexpected response format:', data);
+                        throw new Error('Invalid response format from Gemini API');
+                    }
+                    
+                    return data.candidates[0].content.parts[0].text;
+                } catch (directError) {
+                    console.warn('Direct API call failed, trying with CORS proxy:', directError);
+                    
+                    try {
+                        // If direct request fails, try with CORS proxy
+                        const proxyResponse = await fetch(corsProxy + apiUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify(requestBody)
+                        });
+                        
+                        console.log('Proxy response status:', proxyResponse.status);
+                        
+                        const proxyResponseText = await proxyResponse.text();
+                        console.log('Proxy response text:', proxyResponseText);
+                        
+                        if (!proxyResponse.ok) {
+                            throw new Error(`Proxy API error (${proxyResponse.status}): ${proxyResponseText}`);
+                        }
+                        
+                        const proxyData = JSON.parse(proxyResponseText);
+                        
+                        if (!proxyData.candidates || !proxyData.candidates[0] || !proxyData.candidates[0].content || !proxyData.candidates[0].content.parts || !proxyData.candidates[0].content.parts[0]) {
+                            console.error('Unexpected proxy response format:', proxyData);
+                            throw new Error('Invalid response format from Gemini API through proxy');
+                        }
+                        
+                        return proxyData.candidates[0].content.parts[0].text;
+                    } catch (proxyError) {
+                        console.warn('Proxy API call also failed, using local fallback:', proxyError);
+                        
+                        // If all API attempts fail, use a local fallback to generate simple content
+                        return generateLocalFallbackContent(prompt);
+                    }
+                }
+            } catch (error) {
+                console.error('Detailed error in generateContentWithGemini:', error);
+                throw error;
+            }
+        }
+        
+        // Local fallback content generator
+        function generateLocalFallbackContent(prompt) {
+            const topic = prompt.trim();
+            const currentDate = new Date().toLocaleDateString();
+            
+            return `# ${topic} - Cryptocurrency Analysis
+            
+## Introduction
+
+Welcome to our in-depth analysis of ${topic} in the cryptocurrency space. As of ${currentDate}, this topic has gained significant attention among investors, traders, and blockchain enthusiasts. This article aims to provide a comprehensive overview and insights into why ${topic} matters for the crypto ecosystem.
+
+## Background and Context
+
+${topic} represents an important development in the cryptocurrency market. Recent trends show increasing interest from both institutional and retail investors. Understanding the historical context helps us better analyze current patterns and potential future movements.
+
+## Key Market Indicators
+
+- Market capitalization: The relative size and growth potential related to ${topic}
+- Trading volume: Recent changes in trading activity around related assets
+- Institutional adoption: How major financial players are approaching this area
+- Regulatory landscape: Current and anticipated regulatory developments
+
+## Technical Analysis
+
+From a technical perspective, several patterns are emerging that deserve attention. Chart analysis shows support and resistance levels that may influence short to medium-term price movements. Technical indicators suggest potential volatility in the coming weeks.
+
+## Investment Considerations
+
+When considering ${topic} as part of your investment strategy, balance the potential upside with risk management principles. Diversification remains important, as does staying informed about rapid developments in this space.
+
+## Conclusion
+
+${topic} continues to evolve within the cryptocurrency ecosystem. While opportunities exist, thoughtful analysis and careful risk management remain essential. We'll continue tracking developments and providing updates as the situation evolves.
+
+*Note: This content was generated locally as a fallback when the AI service was unavailable. For more detailed crypto analysis, please try again later.*`;
+        }
+        
+        // Add Font Awesome for icons
+        const fontAwesomeLink = document.createElement('link');
+        fontAwesomeLink.rel = 'stylesheet';
+        fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(fontAwesomeLink);
     </script>
 </body>
 </html> 
