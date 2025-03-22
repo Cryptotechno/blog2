@@ -1329,6 +1329,30 @@
             border-radius: 50%;
             border-top-color: var(--primary-color);
             animation: spin 1s ease-in-out infinite;
+            margin-bottom: var(--space-3);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-full);
+            margin: var(--space-3) 0;
+            overflow: hidden;
+            height: 8px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: var(--radius-full);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: var(--space-2);
         }
         
         @keyframes spin {
@@ -1888,6 +1912,10 @@
                 <div class="ai-loading">
                     <div class="ai-loading-spinner"></div>
                     <p>Generating content...</p>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">0%</p>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-cancel" id="aiPromptCancel">Cancel</button>
@@ -1923,19 +1951,64 @@
             aiPromptSubmitBtn.disabled = true;
             aiPromptCancelBtn.disabled = true;
             
+            // Get progress elements
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            // Reset progress
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            // Start progress animation
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                // Increment progress but slow down as it approaches 90%
+                if (progress < 30) {
+                    progress += 5;
+                } else if (progress < 60) {
+                    progress += 3;
+                } else if (progress < 85) {
+                    progress += 1;
+                } else if (progress < 90) {
+                    progress += 0.5;
+                }
+                
+                // Cap at 90% until content is actually received
+                if (progress > 90) progress = 90;
+                
+                // Update progress bar and text
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+            }, 300);
+            
             try {
                 const content = await generateContentWithGemini(prompt);
-                contentTextarea.value = content;
                 
-                // Close modal
-                aiPromptModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                // Complete progress
+                clearInterval(progressInterval);
+                progressBar.style.width = '100%';
+                progressText.textContent = '100%';
                 
-                // Focus on title if empty
-                if (!document.getElementById('articleTitle').value) {
-                    document.getElementById('articleTitle').focus();
-                }
+                // Wait a moment to show completion
+                setTimeout(() => {
+                    contentTextarea.value = content;
+                    
+                    // Close modal
+                    aiPromptModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    
+                    // Focus on title if empty
+                    if (!document.getElementById('articleTitle').value) {
+                        document.getElementById('articleTitle').focus();
+                    }
+                }, 500);
             } catch (error) {
+                // Stop progress animation
+                clearInterval(progressInterval);
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Failed';
+                progressText.style.color = 'var(--error-color)';
+                
                 console.error('Error generating content:', error);
                 let errorMessage = 'Failed to generate content. Please try again.';
                 
@@ -1954,9 +2027,15 @@
                 
                 alert(errorMessage);
             } finally {
-                aiLoading.style.display = 'none';
-                aiPromptSubmitBtn.disabled = false;
-                aiPromptCancelBtn.disabled = false;
+                // Ensure loading is hidden even if error occurs
+                setTimeout(() => {
+                    aiLoading.style.display = 'none';
+                    aiPromptSubmitBtn.disabled = false;
+                    aiPromptCancelBtn.disabled = false;
+                    
+                    // Reset progress styles
+                    progressText.style.color = 'var(--text-secondary)';
+                }, 1000);
             }
         });
         
