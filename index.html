@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimal Blog</title>
+    <title>Crypto Blog</title>
     <!-- Include marked.js for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Include highlight.js for code syntax highlighting -->
@@ -11,35 +11,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <style>
         :root {
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --text-color: #374151;
-            --text-light: #6b7280;
-            --bg-color: #f9fafb;
-            --card-bg: white;
-            --border-color: #e5e7eb;
-            --success-color: #10b981;
-            --error-color: #ef4444;
-            --header-bg: #1e3a8a;
-            --header-text: white;
+            --primary-color: #00a8ff;
+            --primary-hover: #0097e6;
+            --text-color: #f5f6fa;
+            --text-light: #dcdde1;
+            --bg-color: #192a56;
+            --card-bg: #273c75;
+            --border-color: #40739e;
+            --success-color: #4cd137;
+            --error-color: #e84118;
+            --header-bg: #0c2461;
+            --header-text: #f5f6fa;
             --transition-speed: 0.3s;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
             --radius: 0.5rem;
         }
         
-        [data-theme="dark"] {
-            --primary-color: #3b82f6;
-            --primary-hover: #60a5fa;
-            --text-color: #e5e7eb;
-            --text-light: #9ca3af;
-            --bg-color: #111827;
-            --card-bg: #1f2937;
-            --border-color: #374151;
-            --success-color: #10b981;
-            --error-color: #ef4444;
-            --header-bg: #111827;
-            --header-text: #f9fafb;
+        [data-theme="light"] {
+            --primary-color: #00a8ff;
+            --primary-hover: #0097e6;
+            --text-color: #2f3640;
+            --text-light: #7f8fa6;
+            --bg-color: #f5f6fa;
+            --card-bg: white;
+            --border-color: #dcdde1;
+            --success-color: #4cd137;
+            --error-color: #e84118;
+            --header-bg: #00a8ff;
+            --header-text: white;
         }
         
         * {
@@ -150,6 +150,7 @@
             margin-bottom: 2rem;
             border: 1px solid var(--border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
         }
         
         .card:hover {
@@ -157,8 +158,21 @@
             box-shadow: var(--shadow-hover);
         }
         
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+        
         .form-group {
             margin-bottom: 1.25rem;
+            position: relative;
         }
         
         label {
@@ -174,16 +188,17 @@
             border: 1px solid var(--border-color);
             font-family: inherit;
             font-size: 1rem;
-            background-color: var(--card-bg);
+            background-color: rgba(0, 0, 0, 0.2);
             color: var(--text-color);
             box-sizing: border-box;
-            transition: border-color 0.2s ease;
+            transition: all 0.2s ease;
         }
         
         input:focus, textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.2);
+            background-color: rgba(0, 0, 0, 0.3);
         }
         
         textarea {
@@ -198,9 +213,13 @@
             border: none;
             cursor: pointer;
             font-weight: 500;
-            transition: background-color 0.2s, transform 0.2s;
+            transition: all 0.2s ease;
             margin-top: 1rem;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         
         button:hover {
@@ -213,9 +232,13 @@
         }
         
         button:disabled {
-            background-color: #93c5fd;
+            background-color: #7f8fa6;
             cursor: not-allowed;
             transform: none;
+        }
+        
+        .btn-icon {
+            font-size: 1.1rem;
         }
         
         .alert {
@@ -395,38 +418,162 @@
                 padding: 1.25rem;
             }
         }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .crypto-icon {
+            font-size: 1.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 0.25rem;
+            animation: pulse 2s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .crypto-banner {
+            background: linear-gradient(135deg, var(--header-bg) 0%, var(--primary-color) 100%);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border-radius: 0 0 var(--radius) var(--radius);
+            color: var(--header-text);
+        }
+        
+        .crypto-banner h2 {
+            margin-top: 1rem;
+            font-size: 1.75rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .crypto-banner p {
+            margin-top: 0.5rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .crypto-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .crypto-icons .crypto-icon {
+            font-size: 2.5rem;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+        
+        .crypto-icons .crypto-icon:hover {
+            transform: translateY(-5px);
+            opacity: 1;
+        }
+        
+        .crypto-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .category-tag {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        
+        .category-tag:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .footer-icons {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-icons .crypto-icon {
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>Minimal Blog</h1>
+            <div class="logo">
+                <span class="crypto-icon">₿</span>
+                <h1>Crypto Blog</h1>
+            </div>
             <div style="display: flex; align-items: center;">
                 <nav>
                     <a href="index.html" class="active">Home</a>
-                    <a href="articles.html">Articles</a>
                     <a href="admin.html">Admin</a>
+                    <a href="articles.html">Articles</a>
                 </nav>
                 <button class="theme-switch" id="themeToggle">🌙</button>
             </div>
         </div>
     </header>
     
+    <div class="crypto-banner">
+        <div class="container">
+            <div class="crypto-icons">
+                <span class="crypto-icon">₿</span>
+                <span class="crypto-icon">Ξ</span>
+                <span class="crypto-icon">Ł</span>
+                <span class="crypto-icon">Ð</span>
+                <span class="crypto-icon">₳</span>
+            </div>
+            <h2>Your Source for Crypto News, Analysis, and Insights</h2>
+            <p>Stay informed about blockchain technology, cryptocurrency markets, and decentralized finance. UPDATED VERSION!</p>
+        </div>
+    </div>
+    
     <div class="container">
         <div class="card">
-            <h2>Add New Article</h2>
+            <div class="card-header">
+                <h2>Add New Crypto Article</h2>
+                <div class="crypto-categories">
+                    <span class="category-tag">Bitcoin</span>
+                    <span class="category-tag">Ethereum</span>
+                    <span class="category-tag">DeFi</span>
+                    <span class="category-tag">NFTs</span>
+                    <span class="category-tag">Market Analysis</span>
+                </div>
+            </div>
             <form id="postForm">
                 <div class="form-group">
                     <label for="title">Title</label>
-                    <input type="text" id="title" name="title" placeholder="Enter article title" required>
+                    <input type="text" id="title" name="title" placeholder="Enter your crypto article title" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="content">Content (Markdown)</label>
-                    <textarea id="content" name="content" placeholder="# Your title here&#10;&#10;Write your article content using **Markdown**. &#10;&#10;- Bullet points&#10;- Are supported&#10;&#10;```&#10;Even code blocks are supported&#10;```" required></textarea>
+                    <textarea id="content" name="content" placeholder="# Bitcoin Analysis&#10;&#10;Today we're looking at **Bitcoin's** market performance and future predictions.&#10;&#10;## Key Points&#10;&#10;- Bitcoin reached a new resistance level&#10;- Ethereum showed strong correlation&#10;- DeFi projects continue to grow&#10;&#10;```&#10;// Example code for blockchain interaction&#10;const tx = await contract.transfer(recipient, amount);&#10;```" required></textarea>
                 </div>
                 
-                <button type="submit" id="publishBtn">Publish Article</button>
+                <button type="submit" id="publishBtn">Publish Article <span class="btn-icon">📝</span></button>
             </form>
             
             <div id="successAlert" class="alert alert-success">
@@ -443,11 +590,15 @@
         </div>
         
         <div class="card">
-            <h2>Latest Article</h2>
-            <button id="fetchLatestBtn">Fetch Latest Article</button>
+            <div class="card-header">
+                <h2>Latest Crypto Insights</h2>
+                <div class="card-actions">
+                    <button id="fetchLatestBtn">Fetch Latest <span class="btn-icon">⟳</span></button>
+                </div>
+            </div>
             
             <div id="fetchingLoading" class="loading">
-                Fetching latest article...
+                Fetching latest insights...
             </div>
             
             <div id="latestArticle" class="markdown-body" style="display: none;">
@@ -461,14 +612,21 @@
             </div>
             
             <div id="noArticlesAlert" class="alert alert-error">
-                No articles found. Add your first article!
+                No articles found. Be the first to add crypto insights!
             </div>
         </div>
     </div>
     
     <footer>
         <div class="container">
-            <p>A minimalist blog powered by <a href="https://supabase.com" target="_blank">Supabase</a> and <a href="https://github.com/markedjs/marked" target="_blank">Marked.js</a></p>
+            <div class="footer-content">
+                <div class="crypto-icons footer-icons">
+                    <span class="crypto-icon">₿</span>
+                    <span class="crypto-icon">Ξ</span>
+                    <span class="crypto-icon">Ł</span>
+                </div>
+                <p>Crypto Blog powered by <a href="https://supabase.com" target="_blank">Supabase</a> and <a href="https://github.com/markedjs/marked" target="_blank">Marked.js</a></p>
+            </div>
         </div>
     </footer>
     
@@ -495,23 +653,22 @@
         
         // Theme toggle
         themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             
-            themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
+            themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
         });
         
-        // Set initial theme based on localStorage or user preference
+        // Set initial theme based on localStorage or default to dark
         document.addEventListener('DOMContentLoaded', () => {
             const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            const theme = savedTheme || 'dark';
             
             document.documentElement.setAttribute('data-theme', theme);
-            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+            themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
         });
         
         // Add event listeners
