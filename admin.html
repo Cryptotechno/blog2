@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Minimal Blog</title>
+    <!-- Include marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Include highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-color: #374151;
+            --text-light: #6b7280;
+            --bg-color: #f9fafb;
+            --card-bg: white;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --header-bg: #1e3a8a;
+            --header-text: white;
+            --transition-speed: 0.3s;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 0.5rem;
+        }
+        
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --primary-hover: #60a5fa;
+            --text-color: #e5e7eb;
+            --text-light: #9ca3af;
+            --bg-color: #111827;
+            --card-bg: #1f2937;
+            --border-color: #374151;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --header-bg: #111827;
+            --header-text: #f9fafb;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: var(--header-text);
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+        
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+        }
+        
+        .theme-switch {
+            background: none;
+            border: none;
+            color: var(--header-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        
+        h1, h2, h3 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        h2:hover::after {
+            width: 100%;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, textarea, button, select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border-color);
+            font-family: inherit;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.2s;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.btn-danger {
+            background-color: var(--error-color);
+        }
+
+        button.btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        button.btn-warning {
+            background-color: var(--warning-color);
+        }
+
+        button.btn-warning:hover {
+            background-color: #d97706;
+        }
+        
+        .alert {
+            padding: 0.875rem;
+            border-radius: 0.375rem;
+            margin: 1rem 0;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert-success {
+            background-color: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+        
+        .alert-error {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #b45309;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-light);
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Admin Table Styles */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .admin-table th, .admin-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .admin-table th {
+            font-weight: 600;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .admin-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .admin-actions button {
+            margin-top: 0;
+            padding: 0.5rem;
+            width: auto;
+        }
+        
+        .truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        
+        .no-articles {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-light);
+            font-style: italic;
+        }
+        
+        /* Modal Styles */
+        #editModal, #deleteModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .modal-body {
+            margin-top: 1rem;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .modal-footer button {
+            margin-top: 0;
+        }
+        
+        footer {
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 640px) {
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            nav {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                padding: 1rem;
+            }
+            
+            .admin-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .admin-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <div style="display: flex; align-items: center;">
+                <nav>
+                    <a href="index.html">Home</a>
+                    <a href="articles.html">Articles</a>
+                    <a href="admin.html" class="active">Admin</a>
+                </nav>
+                <button class="theme-switch" id="themeToggle">🌙</button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2>Manage Articles</h2>
+            <p>View, edit, and delete your blog articles here.</p>
+            
+            <div id="adminAlerts">
+                <div id="successAlert" class="alert alert-success">
+                    Operation completed successfully!
+                </div>
+                
+                <div id="errorAlert" class="alert alert-error">
+                    An error occurred. Please try again.
+                </div>
+            </div>
+            
+            <div id="loadingArticles" class="loading">Loading articles...</div>
+            
+            <div id="articlesTableContainer">
+                <table id="articlesTable" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Preview</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="articlesTableBody">
+                        <!-- Articles will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="noArticlesMessage" class="no-articles" style="display: none;">
+                No articles found. <a href="index.html">Create your first article</a>.
+            </div>
+        </div>
+        
+        <!-- Create New Article Button -->
+        <div style="text-align: center;">
+            <a href="index.html">
+                <button>Create New Article</button>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div id="editModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeEditModal">&times;</button>
+            <h2>Edit Article</h2>
+            
+            <div id="editAlerts">
+                <div id="editSuccessAlert" class="alert alert-success">
+                    Article updated successfully!
+                </div>
+                
+                <div id="editErrorAlert" class="alert alert-error">
+                    Error updating article. Please try again.
+                </div>
+            </div>
+            
+            <form id="editForm" class="modal-body">
+                <input type="hidden" id="editArticleId">
+                
+                <div class="form-group">
+                    <label for="editTitle">Title</label>
+                    <input type="text" id="editTitle" name="editTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editContent">Content (Markdown)</label>
+                    <textarea id="editContent" name="editContent" required></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" id="cancelEditButton">Cancel</button>
+                    <button type="submit" id="saveEditButton">Save Changes</button>
+                </div>
+            </form>
+            
+            <div id="editLoading" class="loading">Saving changes...</div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeDeleteModal">&times;</button>
+            <h2>Delete Article</h2>
+            
+            <div class="modal-body">
+                <p>Are you sure you want to delete "<span id="deleteArticleTitle"></span>"?</p>
+                <p class="alert alert-warning" style="display: block;">
+                    This action cannot be undone.
+                </p>
+                
+                <div id="deleteAlerts">
+                    <div id="deleteSuccessAlert" class="alert alert-success">
+                        Article deleted successfully!
+                    </div>
+                    
+                    <div id="deleteErrorAlert" class="alert alert-error">
+                        Error deleting article. Please try again.
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" id="cancelDeleteButton">Cancel</button>
+                    <button type="button" id="confirmDeleteButton" class="btn-danger">Delete</button>
+                </div>
+                
+                <div id="deleteLoading" class="loading">Deleting article...</div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>A minimalist blog powered by <a href="https://supabase.com" target="_blank">Supabase</a> and <a href="https://github.com/markedjs/marked" target="_blank">Marked.js</a></p>
+        </div>
+    </footer>
+    
+    <script>
+        // Supabase configuration
+        const SUPABASE_URL = 'https://nyvceshwodvfhsezjttr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55dmNlc2h3b2R2ZmhzZXpqdHRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2NDYxMzMsImV4cCI6MjA1ODIyMjEzM30.ZaLIw7AMh392QrfaG3HNY9sh2e35TwugrMzSUFo3-sM';
+        
+        // DOM Elements
+        const articlesTableBody = document.getElementById('articlesTableBody');
+        const loadingArticles = document.getElementById('loadingArticles');
+        const noArticlesMessage = document.getElementById('noArticlesMessage');
+        const articlesTableContainer = document.getElementById('articlesTableContainer');
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Alerts
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        const editSuccessAlert = document.getElementById('editSuccessAlert');
+        const editErrorAlert = document.getElementById('editErrorAlert');
+        const deleteSuccessAlert = document.getElementById('deleteSuccessAlert');
+        const deleteErrorAlert = document.getElementById('deleteErrorAlert');
+        
+        // Edit Modal
+        const editModal = document.getElementById('editModal');
+        const editForm = document.getElementById('editForm');
+        const editArticleId = document.getElementById('editArticleId');
+        const editTitle = document.getElementById('editTitle');
+        const editContent = document.getElementById('editContent');
+        const closeEditModal = document.getElementById('closeEditModal');
+        const cancelEditButton = document.getElementById('cancelEditButton');
+        const saveEditButton = document.getElementById('saveEditButton');
+        const editLoading = document.getElementById('editLoading');
+        
+        // Delete Modal
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteArticleTitle = document.getElementById('deleteArticleTitle');
+        const closeDeleteModal = document.getElementById('closeDeleteModal');
+        const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        const deleteLoading = document.getElementById('deleteLoading');
+        
+        let currentArticleId = null;
+        
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
+        });
+        
+        // Set initial theme based on localStorage or user preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+            
+            // Fetch articles when the page loads
+            fetchAllArticles();
+        });
+        
+        // ======= Modal Events ========
+        
+        // Edit Modal
+        closeEditModal.addEventListener('click', () => {
+            editModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        cancelEditButton.addEventListener('click', () => {
+            editModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Delete Modal
+        closeDeleteModal.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        cancelDeleteButton.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === editModal) {
+                editModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            if (event.target === deleteModal) {
+                deleteModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // ======= Form Submissions ========
+        
+        // Edit form submission
+        editForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            // Hide alerts
+            hideAlerts('edit');
+            
+            // Get form data
+            const id = editArticleId.value;
+            const title = editTitle.value.trim();
+            const content = editContent.value.trim();
+            
+            // Validate inputs
+            if (!title || !content) {
+                editErrorAlert.textContent = 'Please fill in both title and content fields.';
+                editErrorAlert.style.display = 'block';
+                return;
+            }
+            
+            // Show loading, disable button
+            editLoading.style.display = 'block';
+            saveEditButton.disabled = true;
+            
+            try {
+                // Update article in Supabase
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/blog?id=eq.${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        title,
+                        content
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to update article');
+                }
+                
+                // Show success message
+                editSuccessAlert.style.display = 'block';
+                
+                // Close modal after 1.5 seconds
+                setTimeout(() => {
+                    editModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    
+                    // Refresh the article list
+                    fetchAllArticles();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                editErrorAlert.textContent = error.message || 'Error updating article. Please try again.';
+                editErrorAlert.style.display = 'block';
+            } finally {
+                // Hide loading, enable button
+                editLoading.style.display = 'none';
+                saveEditButton.disabled = false;
+            }
+        });
+        
+        // Delete confirmation
+        confirmDeleteButton.addEventListener('click', async () => {
+            // Hide alerts
+            hideAlerts('delete');
+            
+            // Show loading, disable button
+            deleteLoading.style.display = 'block';
+            confirmDeleteButton.disabled = true;
+            
+            try {
+                // Delete article from Supabase
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/blog?id=eq.${currentArticleId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete article');
+                }
+                
+                // Show success message
+                deleteSuccessAlert.style.display = 'block';
+                
+                // Close modal after 1.5 seconds
+                setTimeout(() => {
+                    deleteModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    
+                    // Refresh the article list
+                    fetchAllArticles();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                deleteErrorAlert.textContent = error.message || 'Error deleting article. Please try again.';
+                deleteErrorAlert.style.display = 'block';
+            } finally {
+                // Hide loading, enable button
+                deleteLoading.style.display = 'none';
+                confirmDeleteButton.disabled = false;
+            }
+        });
+        
+        // ======= Utility Functions ========
+        
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString(undefined, { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric'
+            });
+        }
+        
+        // Create a preview of the article content
+        function createContentPreview(content, maxLength = 100) {
+            // Remove markdown formatting for the preview
+            let plainText = content
+                .replace(/#+\s(.*)/g, '$1') // Remove headers
+                .replace(/\*\*(.*)\*\*/g, '$1') // Remove bold
+                .replace(/\*(.*)\*/g, '$1') // Remove italic
+                .replace(/\[(.*)\]\(.*\)/g, '$1') // Remove links
+                .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+                .replace(/`(.*)`/g, '$1') // Remove inline code
+                .replace(/!\[(.*)\]\(.*\)/g, '[Image: $1]') // Replace images
+                .trim();
+            
+            if (plainText.length > maxLength) {
+                return plainText.substring(0, maxLength) + '...';
+            }
+            
+            return plainText;
+        }
+        
+        // Hide alert messages
+        function hideAlerts(section = 'main') {
+            if (section === 'main' || section === 'all') {
+                successAlert.style.display = 'none';
+                errorAlert.style.display = 'none';
+            }
+            
+            if (section === 'edit' || section === 'all') {
+                editSuccessAlert.style.display = 'none';
+                editErrorAlert.style.display = 'none';
+            }
+            
+            if (section === 'delete' || section === 'all') {
+                deleteSuccessAlert.style.display = 'none';
+                deleteErrorAlert.style.display = 'none';
+            }
+        }
+        
+        // Open edit modal with article data
+        function openEditModal(article) {
+            // Set form values
+            editArticleId.value = article.id;
+            editTitle.value = article.title;
+            editContent.value = article.content;
+            
+            // Clear any previous alerts
+            hideAlerts('edit');
+            
+            // Show modal
+            editModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Open delete confirmation modal
+        function openDeleteModal(article) {
+            // Set article info
+            currentArticleId = article.id;
+            deleteArticleTitle.textContent = article.title;
+            
+            // Clear any previous alerts
+            hideAlerts('delete');
+            
+            // Show modal
+            deleteModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // ======= Main Functions ========
+        
+        // Fetch all articles from Supabase
+        async function fetchAllArticles() {
+            // Show loading
+            loadingArticles.style.display = 'block';
+            articlesTableContainer.style.display = 'none';
+            noArticlesMessage.style.display = 'none';
+            
+            try {
+                // Fetch articles from Supabase
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/blog?order=created_at.desc`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch articles');
+                }
+                
+                const articles = await response.json();
+                
+                if (articles.length === 0) {
+                    noArticlesMessage.style.display = 'block';
+                    return;
+                }
+                
+                // Clear the table body
+                articlesTableBody.innerHTML = '';
+                
+                // Populate the table
+                articles.forEach(article => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${article.title}</td>
+                        <td class="truncate">${createContentPreview(article.content)}</td>
+                        <td>${formatDate(article.created_at)}</td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="btn-edit" data-id="${article.id}">Edit</button>
+                                <button class="btn-delete btn-danger" data-id="${article.id}">Delete</button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    articlesTableBody.appendChild(row);
+                });
+                
+                // Add event listeners to buttons
+                document.querySelectorAll('.btn-edit').forEach(button => {
+                    button.addEventListener('click', async () => {
+                        const id = button.getAttribute('data-id');
+                        const article = articles.find(a => a.id == id);
+                        openEditModal(article);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const id = button.getAttribute('data-id');
+                        const article = articles.find(a => a.id == id);
+                        openDeleteModal(article);
+                    });
+                });
+                
+                // Show the table
+                articlesTableContainer.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorAlert.textContent = error.message || 'Error loading articles. Please try again.';
+                errorAlert.style.display = 'block';
+            } finally {
+                // Hide loading
+                loadingArticles.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 
